@@ -1,0 +1,1313 @@
+<!DOCTYPE html>
+<html lang="en" style="overflow-x:hidden;">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NRI Exit Planner &#8212; RupeeStories</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1a2e;
+  --gold: #c9a84c;
+  --gold-light: #f0d080;
+  --cream: #faf8f3;
+  --red: #d94f4f;
+  --green: #2d7a5f;
+  --muted: #888;
+  --border: #e8e0d0;
+  --card-bg: #ffffff;
+  --shadow: 0 2px 16px rgba(26,26,46,0.08);
+}
+*{box-sizing:border-box;margin:0;padding:0;overflow-wrap:break-word;word-break:break-word;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);line-height:1.6;min-height:100vh;overflow-x:hidden;}
+
+/* HEADER */
+.site-header{background:var(--ink);padding:12px 24px;display:flex;align-items:center;gap:10px;}
+.site-header a{color:var(--gold);text-decoration:none;font-size:13px;font-weight:500;letter-spacing:0.5px;}
+.site-header a:hover{color:var(--gold-light);}
+
+/* HERO */
+.hero{background:var(--ink);color:white;padding:48px 24px 40px;text-align:center;}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(26px,5vw,48px);font-weight:900;line-height:1.15;margin-bottom:14px;}
+.hero h1 em{color:var(--gold);font-style:italic;}
+.hero p{font-size:16px;color:rgba(255,255,255,0.7);max-width:520px;margin:0 auto 24px;line-height:1.6;}
+.hero-pills{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+.pill{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.8);padding:6px 14px;border-radius:20px;font-size:13px;font-weight:500;}
+
+/* STEP NAV */
+.step-nav{background:var(--ink);padding:0 24px 20px;display:flex;align-items:center;justify-content:center;gap:0;}
+.step-item{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:60px;cursor:pointer;}
+.step-circle{width:32px;height:32px;border-radius:50%;border:2px solid rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:rgba(255,255,255,0.3);transition:all 0.25s;font-family:'Playfair Display',serif;}
+.step-item.active .step-circle{background:var(--gold);border-color:var(--gold);color:var(--ink);}
+.step-item.done .step-circle{background:var(--green);border-color:var(--green);color:white;font-size:11px;}
+.step-lbl{font-size:10px;color:rgba(255,255,255,0.35);letter-spacing:0.5px;text-align:center;white-space:nowrap;transition:color 0.25s;}
+.step-item.active .step-lbl{color:var(--gold-light);}
+.step-item.done .step-lbl{color:rgba(255,255,255,0.5);}
+.step-line{flex:1;height:2px;background:rgba(255,255,255,0.1);margin:0 4px;margin-bottom:18px;max-width:60px;}
+.step-line.done{background:var(--green);}
+
+/* MAIN */
+main{max-width:780px;margin:0 auto;padding:36px 20px 80px;}
+.step-panel{display:none;}
+.step-panel.active{display:block;}
+
+/* SECTION HEADERS — exact scorecard match */
+.section-header{display:flex;align-items:center;gap:12px;margin:40px 0 20px;}
+.section-header:first-child{margin-top:0;}
+.section-icon{width:44px;height:44px;background:var(--ink);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.section-meta{flex:1;}
+.section-meta h2{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;}
+.section-meta p{font-size:13px;color:var(--muted);}
+
+/* CARDS */
+.card{background:var(--card-bg);border:1.5px solid var(--border);border-radius:16px;padding:24px;margin-bottom:16px;transition:box-shadow 0.2s;}
+.card:hover{box-shadow:var(--shadow);}
+.card-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:600;margin-bottom:6px;}
+.card-sub{font-size:13px;color:var(--muted);margin-bottom:18px;line-height:1.5;}
+
+/* HINT */
+.hint{background:#f5f3ee;border-left:3px solid var(--gold);border-radius:0 8px 8px 0;padding:10px 14px;font-size:13px;color:#555;margin-top:14px;line-height:1.5;}
+.hint strong{color:var(--ink);}
+
+/* ASSET INPUTS */
+.asset-group{margin-bottom:8px;}
+.asset-group-label{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin:20px 0 10px;}
+.asset-row{display:flex;align-items:center;gap:12px;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;background:#fafafa;margin-bottom:7px;transition:border-color 0.15s;}
+.asset-row:hover{border-color:var(--gold);}
+.asset-row.flagged{border-color:#f5c0c0;background:#fff5f5;}
+.asset-info{flex:1;min-width:0;}
+.asset-name{font-size:14px;font-weight:500;color:var(--ink);}
+.asset-note{font-size:11px;color:var(--muted);margin-top:1px;}
+.asset-flag{font-size:11px;color:var(--red);font-weight:600;margin-top:2px;}
+.inp-wrap{display:flex;align-items:center;gap:6px;flex-shrink:0;}
+.inp-prefix{font-size:15px;color:var(--muted);font-weight:500;}
+.amt-inp{width:120px;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;color:var(--ink);background:white;text-align:right;outline:none;transition:border-color 0.15s;}
+.amt-inp:focus{border-color:var(--gold);}
+
+/* TOGGLE BUTTONS */
+.toggle-group{display:flex;gap:6px;margin-top:8px;}
+.tog-btn{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:white;color:var(--muted);font-family:'DM Sans',sans-serif;transition:all 0.15s;}
+.tog-btn.active{background:var(--ink);color:var(--gold);border-color:var(--ink);}
+
+/* ASSET SUMMARY TABLE */
+.tbl-wrap{overflow-x:auto;margin-top:6px;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+thead th{text-align:left;padding:8px 12px;font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);border-bottom:2px solid var(--border);}
+tbody tr{border-bottom:1px solid var(--border);}
+tbody tr:last-child{border-bottom:none;font-weight:600;}
+tbody td{padding:9px 12px;vertical-align:top;}
+td.amt{text-align:right;font-family:'Playfair Display',serif;font-weight:600;}
+td.path-badge{white-space:nowrap;}
+.badge{display:inline-block;font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px;}
+.b-green{background:#e8f5ee;color:var(--green);}
+.b-blue{background:#edf2fb;color:#1a4276;}
+.b-amber{background:#fff8e8;color:#7a5010;}
+.b-red{background:#fdf0f0;color:var(--red);}
+.b-purple{background:#f5eef8;color:#6c2f8a;}
+
+/* RISK FLAGS */
+.risk-item{display:flex;align-items:flex-start;gap:12px;padding:12px 16px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:all 0.15s;background:#fafafa;margin-bottom:8px;}
+.risk-item:hover{border-color:#f5c0c0;background:#fff5f5;}
+.risk-item.flagged{background:#fff5f5;border-color:#f5c0c0;}
+.risk-cb{width:20px;height:20px;border:2px solid #ccc;border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;font-size:12px;color:white;transition:all 0.15s;}
+.risk-item.flagged .risk-cb{background:var(--red);border-color:var(--red);}
+.risk-item.auto-flagged{border-color:#f5c0c0;background:#fff5f5;cursor:default;}
+.risk-item.auto-flagged .risk-cb{background:var(--red);border-color:var(--red);}
+.risk-body .risk-lbl{font-size:14px;font-weight:500;}
+.risk-body .risk-why{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.4;}
+.risk-meter{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:12px;margin-bottom:16px;}
+.risk-meter.low{background:#edf7f1;border:1.5px solid #b8ddc8;}
+.risk-meter.mid{background:#fff8e8;border:1.5px solid #f0d888;}
+.risk-meter.high{background:#fdf0f0;border:1.5px solid #f5c0c0;}
+.risk-score-num{font-family:'Playfair Display',serif;font-size:32px;font-weight:900;line-height:1;}
+.low .risk-score-num{color:var(--green);}
+.mid .risk-score-num{color:#c07010;}
+.high .risk-score-num{color:var(--red);}
+.risk-score-lbl{font-size:13px;font-weight:500;}
+
+/* STEP 3 — PLAN OUTPUT */
+.plan-hero{background:var(--ink);border-radius:20px;padding:28px;margin-bottom:20px;color:white;}
+.plan-hero h3{font-family:'Playfair Display',serif;font-size:20px;margin-bottom:4px;}
+.plan-hero p{font-size:13px;color:rgba(255,255,255,0.6);margin-bottom:20px;}
+.plan-totals{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.plan-total-tile{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:14px;}
+.plan-total-lbl{font-size:10px;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;}
+.plan-total-val{font-family:'Playfair Display',serif;font-size:24px;font-weight:900;color:var(--gold);line-height:1.1;}
+.plan-total-sub{font-size:11px;color:rgba(255,255,255,0.4);margin-top:3px;}
+
+.path-card{background:var(--card-bg);border:1.5px solid var(--border);border-radius:16px;padding:20px;margin-bottom:12px;}
+.path-card-hdr{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+.path-ico{font-size:22px;flex-shrink:0;}
+.path-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;}
+.path-sub{font-size:12px;color:var(--muted);margin-top:1px;}
+.path-amounts{display:flex;gap:16px;flex-wrap:wrap;margin-top:10px;}
+.pa-item{flex:1;min-width:100px;}
+.pa-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px;}
+.pa-val{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--ink);}
+.pa-val.green{color:var(--green);}
+.pa-val.red{color:var(--red);}
+.pa-val.gold{color:var(--gold);}
+.path-steps{margin-top:12px;padding-top:12px;border-top:1px solid var(--border);}
+.path-step{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:#555;margin-bottom:5px;line-height:1.4;}
+.ps-num{background:var(--ink);color:var(--gold);font-size:10px;font-weight:700;width:17px;height:17px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+
+/* TIMELINE */
+.timeline{margin-top:4px;}
+.tl-row{display:flex;gap:0;margin-bottom:0;}
+.tl-week{flex:1;position:relative;}
+.tl-week::after{content:'';position:absolute;top:16px;right:0;width:100%;height:2px;background:var(--border);z-index:0;}
+.tl-week:last-child::after{display:none;}
+.tl-dot{width:34px;height:34px;border-radius:50%;background:var(--ink);border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:13px;font-weight:700;color:var(--gold);position:relative;z-index:1;margin-bottom:10px;}
+.tl-wk-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:6px;}
+.tl-items{font-size:12px;color:#555;line-height:1.7;}
+.tl-items li{list-style:none;padding-left:10px;position:relative;}
+.tl-items li::before{content:'·';position:absolute;left:0;color:var(--gold);}
+
+/* WARNING CARD */
+.warn-card{background:#fff5f5;border:1.5px solid #f5c0c0;border-radius:16px;padding:20px;margin-bottom:12px;}
+.warn-card h3{font-family:'Playfair Display',serif;font-size:16px;color:#b03030;margin-bottom:12px;}
+.warn-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:8px;font-size:13px;line-height:1.4;}
+.warn-icon{flex-shrink:0;font-size:15px;}
+
+/* CHECKLIST (step 4) */
+.phase-card{background:var(--card-bg);border:1.5px solid var(--border);border-radius:16px;padding:24px;margin-bottom:16px;transition:box-shadow 0.2s;}
+.phase-card:hover{box-shadow:var(--shadow);}
+.phase-card.open{border-color:#c9e4d0;}
+.phase-hdr{display:flex;align-items:center;gap:14px;cursor:pointer;user-select:none;}
+.phase-ico{width:44px;height:44px;border-radius:12px;background:var(--ink);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.phase-hdr-meta{flex:1;min-width:0;}
+.phase-num{font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:2px;}
+.phase-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:600;line-height:1.3;}
+.phase-sub{font-size:13px;color:var(--muted);margin-top:2px;}
+.phase-right{text-align:right;flex-shrink:0;}
+.phase-step-count{font-size:11px;color:var(--muted);}
+.phase-done-count{font-size:12px;font-weight:600;color:var(--green);min-height:16px;margin-top:2px;}
+.chevron{font-size:14px;color:var(--muted);transition:transform 0.2s;flex-shrink:0;margin-left:4px;}
+.phase-card.open .chevron{transform:rotate(180deg);}
+.phase-body{display:none;padding-top:20px;border-top:1px solid var(--border);margin-top:18px;}
+.phase-card.open .phase-body{display:block;}
+.ctx-box{background:#f5f3ee;border-left:3px solid var(--gold);border-radius:0 8px 8px 0;padding:10px 14px;font-size:13px;color:#555;margin-bottom:20px;line-height:1.5;}
+.ctx-box strong{color:var(--ink);}
+.grp-label{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin:20px 0 10px;}
+.grp-label:first-child{margin-top:0;}
+.task{display:flex;align-items:flex-start;gap:12px;padding:12px 16px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:all 0.15s;background:#fafafa;margin-bottom:8px;}
+.task:hover{border-color:var(--gold);background:#fffdf7;}
+.task.done{border-color:var(--gold);background:#fffcf0;}
+.task.done .task-text{text-decoration:line-through;color:var(--muted);}
+.task-chk{width:20px;height:20px;border:2px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;font-size:11px;color:white;transition:all 0.15s;}
+.task.done .task-chk{background:var(--gold);border-color:var(--gold);}
+.task-body{flex:1;}
+.task-text{font-size:14px;font-weight:500;line-height:1.4;color:var(--ink);}
+.task-detail{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.5;}
+.tag{display:inline-block;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;margin-top:6px;font-family:'Playfair Display',serif;}
+.t-urgent{background:#fdf0f0;color:var(--red);border:1px solid #f5c0c0;}
+.t-tax{background:#edf2fb;color:#1a4276;border:1px solid #c0d0f0;}
+.t-legal{background:#f5eef8;color:#6c2f8a;border:1px solid #d8b8ee;}
+.t-bank{background:#edf7f1;color:#1a5a3a;border:1px solid #b8ddc8;}
+.t-once{background:#f5f3ee;color:#7a6020;border:1px solid #ddd0a0;}
+
+/* NAV BUTTONS */
+.step-nav-btns{display:flex;gap:12px;margin-top:32px;}
+.btn-primary{background:var(--ink);color:white;border:none;padding:14px 32px;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:all 0.2s;letter-spacing:0.3px;}
+.btn-primary:hover{background:#2d2d4e;transform:translateY(-1px);box-shadow:0 6px 20px rgba(26,26,46,0.25);}
+.btn-secondary{background:white;color:var(--ink);border:1.5px solid var(--border);padding:14px 24px;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer;transition:all 0.2s;}
+.btn-secondary:hover{border-color:var(--gold);color:var(--gold);}
+.btn-gold{background:var(--gold);color:var(--ink);border:none;padding:14px 32px;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s;}
+.btn-gold:hover{background:var(--gold-light);transform:translateY(-1px);}
+.btn-retake{width:100%;padding:12px;background:var(--ink);color:var(--gold);border:1.5px solid var(--gold);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:background 0.2s;margin-top:8px;}
+.btn-retake:hover{background:#2a2b3e;}
+
+/* CHECKLIST PROGRESS BAR */
+.cl-progress{background:var(--ink);border-radius:14px;padding:18px 20px;margin-bottom:20px;display:flex;align-items:center;gap:16px;}
+.cl-score-num{font-family:'Playfair Display',serif;font-size:28px;font-weight:900;color:var(--gold);line-height:1;white-space:nowrap;}
+.cl-track-wrap{flex:1;}
+.cl-track{background:rgba(255,255,255,0.1);border-radius:6px;height:6px;overflow:hidden;margin-bottom:5px;}
+.cl-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-light));border-radius:6px;width:0%;transition:width 0.4s cubic-bezier(0.34,1.56,0.64,1);}
+.cl-lbl{font-size:11px;color:rgba(255,255,255,0.5);}
+
+/* DISCLAIMER */
+.disclaimer{background:#f5f3ee;border-left:3px solid var(--gold);border-radius:0 8px 8px 0;padding:10px 14px;font-size:12px;color:#666;line-height:1.5;margin:0 0 28px;}
+.disclaimer strong{color:var(--ink);}
+
+/* FOOTER */
+.site-footer{text-align:center;padding:24px 20px;font-size:12px;color:var(--muted);border-top:1px solid var(--border);}
+.site-footer a{color:var(--gold);text-decoration:none;}
+
+/* CONFIRM BAR */
+.confirm-bar{display:none;background:#fdf0f0;border:1.5px solid #f5c0c0;border-radius:10px;margin-bottom:16px;padding:12px 16px;font-size:13px;color:var(--red);align-items:center;gap:12px;}
+.confirm-bar.show{display:flex;}
+.confirm-bar span{flex:1;font-weight:500;}
+.c-yes,.c-no{padding:6px 14px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:inherit;}
+.c-yes{background:var(--red);color:white;}
+.c-no{background:white;color:var(--muted);border:1.5px solid var(--border);}
+
+/* FX ROW */
+.fx-row{display:flex;align-items:center;gap:10px;margin-bottom:20px;padding:12px 16px;background:var(--card-bg);border:1.5px solid var(--border);border-radius:10px;}
+.fx-lbl{font-size:13px;color:var(--muted);flex:1;}
+.fx-inp{width:80px;padding:5px 8px;border:1.5px solid var(--border);border-radius:6px;font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--ink);text-align:center;outline:none;}
+.fx-inp:focus{border-color:var(--gold);}
+
+@media(max-width:600px){
+  main{padding:20px 12px 60px;}
+  .plan-totals{grid-template-columns:1fr 1fr;}
+  .plan-total-val{font-size:20px;}
+  .phase-card{padding:16px 14px;}
+  .step-nav-btns{flex-direction:column;}
+  .btn-primary,.btn-secondary,.btn-gold{width:100%;text-align:center;}
+  .tl-row{flex-direction:column;gap:16px;}
+  .tl-week::after{display:none;}
+  .asset-row{flex-direction:column;align-items:flex-start;gap:8px;}
+  .inp-wrap{align-self:stretch;}
+  .amt-inp{width:100%;}
+}
+</style>
+</head>
+<body>
+
+<div class="site-header">
+  <a href="https://www.reddit.com/r/RupeeStories/" target="_blank">&#8599; r/RupeeStories</a>
+</div>
+
+<div class="hero">
+  <h1>NRI <em>Exit Planner</em></h1>
+  <p>I&#8217;m not going back. How do I move my money from India to the US cleanly?<br>4 steps. Every asset type. Every risk flag.</p>
+  <div class="hero-pills">
+    <span class="pill">&#128274; No login</span>
+    <span class="pill">&#128225; No data collected</span>
+    <span class="pill">&#9989; 4 steps &nbsp;&#183;&nbsp; 42 actions</span>
+  </div>
+</div>
+
+<!-- STEP INDICATOR -->
+<div class="step-nav" id="step-nav">
+  <div class="step-item active" id="sni-1" data-go="1">
+    <div class="step-circle">1</div>
+    <div class="step-lbl">What you own</div>
+  </div>
+  <div class="step-line" id="sl-1"></div>
+  <div class="step-item" id="sni-2" data-go="2">
+    <div class="step-circle">2</div>
+    <div class="step-lbl">Risk check</div>
+  </div>
+  <div class="step-line" id="sl-2"></div>
+  <div class="step-item" id="sni-3" data-go="3">
+    <div class="step-circle">3</div>
+    <div class="step-lbl">Your plan</div>
+  </div>
+  <div class="step-line" id="sl-3"></div>
+  <div class="step-item" id="sni-4" data-go="4">
+    <div class="step-circle">4</div>
+    <div class="step-lbl">Checklist</div>
+  </div>
+</div>
+
+<main>
+
+<!-- ═══════════════════════════════════════════
+     STEP 1: ASSET INVENTORY
+═══════════════════════════════════════════ -->
+<div class="step-panel active" id="panel-1">
+
+  <div class="disclaimer">
+    <strong>&#128203; Planning guide only &#8212; not legal or tax advice.</strong> Tax estimates shown are rough planning figures. Work with a SEBI-registered CA before executing any large transfers.
+  </div>
+
+  <div class="section-header">
+    <div class="section-icon">&#128176;</div>
+    <div class="section-meta">
+      <h2>What Do You Actually Own?</h2>
+      <p>List everything across both countries. You cannot move money correctly until you know what bucket it sits in.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Bank Accounts</div>
+    <div class="card-sub">Get this structure right first &#8212; everything else flows through it.</div>
+
+    <div class="asset-group-label">NRE Account (freely repatriable)</div>
+    <div class="asset-row" id="row-nre">
+      <div class="asset-info"><div class="asset-name">NRE Account Balance</div><div class="asset-note">&#9989; Fully repatriable &#183; No limit &#183; No tax in India</div></div>
+      <div class="inp-wrap"><span class="inp-prefix">&#8377;</span><input type="text" class="amt-inp" id="inp-nre" placeholder="0" inputmode="numeric"></div>
+    </div>
+
+    <div class="asset-group-label">NRO Account</div>
+    <div class="asset-row" id="row-nro">
+      <div class="asset-info"><div class="asset-name">NRO Account Balance</div><div class="asset-note">&#128203; Up to $1M/year &#183; Needs 15CA/15CB &#183; TDS may apply</div></div>
+      <div class="inp-wrap"><span class="inp-prefix">&#8377;</span><input type="text" class="amt-inp" id="inp-nro" placeholder="0" inputmode="numeric"></div>
+    </div>
+
+    <div class="asset-group-label">Resident Savings Account</div>
+    <div class="asset-row flagged" id="row-resident">
+      <div class="asset-info"><div class="asset-name">Resident Savings Account</div><div class="asset-note asset-flag" id="resident-flag">&#10071; NRIs cannot legally hold resident savings accounts &#8212; convert immediately</div></div>
+      <div class="inp-wrap"><span class="inp-prefix">&#8377;</span><input type="text" class="amt-inp" id="inp-resident" placeholder="0" inputmode="numeric"></div>
+    </div>
+    <div class="hint">&#128161; <strong>Most NRIs miss this.</strong> The moment you became NRI you were required to convert resident savings accounts to NRO. Holding a resident account as an NRI is a FEMA violation &#8212; fix this before anything else.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Investments</div>
+    <div class="card-sub">Current market value. These all need to be sold and moved via NRO before repatriation.</div>
+
+    <div class="asset-group-label">Fixed Deposits</div>
+    <div class="asset-row">
+      <div class="asset-info"><div class="asset-name">FD Principal (total)</div><div class="asset-note">Interest taxed at 30% TDS. Principal fully recoverable via NRO.</div></div>
+      <div class="inp-wrap"><span class="inp-prefix">&#8377;</span><input type="text" class="amt-inp" id="inp-fd" placeholder="0" inputmode="numeric"></div>
+    </div>
+
+    <div class="asset-group-label">Mutual Funds</div>
+    <div class="asset-row">
+      <div class="asset-info">
+        <div class="asset-name">Total MF Portfolio (current value)</div>
+        <div class="asset-note">TDS deducted by AMC before crediting NRO. Update KYC to NRI status before redeeming.</div>
+        <div class="toggle-group">
+          <button class="tog-btn active" id="mf-eq-high" data-mfpct="80">Mostly equity (80%)</button>
+          <button class="tog-btn" id="mf-eq-mix" data-mfpct="50">Mixed (50/50)</button>
+          <button class="tog-btn" id="mf-eq-debt" data-mfpct="20">Mostly debt (80%)</button>
+        </div>
+      </div>
+      <div class="inp-wrap"><span class="inp-prefix">&#8377;</span><input type="text" class="amt-inp" id="inp-mf" placeholder="0" inputmode="numeric"></div>
+    </div>
+
+    <div class="asset-group-label">Stocks / Demat</div>
+    <div class="asset-row">
+      <div class="asset-info"><div class="asset-name">Stock Portfolio (current value)</div><div class="asset-note">Sell through broker, proceeds to NRO. LTCG 12.5% (held &gt;1yr), STCG 15%.</div></div>
+      <div class="inp-wrap"><span class="inp-prefix">&#8377;</span><input type="text" class="amt-inp" id="inp-stocks" placeholder="0" inputmode="numeric"></div>
+    </div>
+    <div class="hint">&#128161; <strong>Cost basis matters.</strong> If you do not have records of your original purchase price for each MF or stock, you will not be able to compute actual capital gains. Get your purchase history from CAMS, KFintech, or your broker before selling anything.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Real Estate</div>
+    <div class="card-sub">Estimated sale value. High TDS applies &#8212; the buyer deducts from your sale amount.</div>
+    <div class="asset-row">
+      <div class="asset-info">
+        <div class="asset-name">Property / Land (estimated sale value)</div>
+        <div class="asset-note">Buyer must deduct TDS on your behalf. Plan for it.</div>
+        <div class="toggle-group">
+          <button class="tog-btn active" id="re-ltcg" data-re="ltcg">LTCG (held &gt;2 years)</button>
+          <button class="tog-btn" id="re-stcg" data-re="stcg">STCG (held &lt;2 years)</button>
+        </div>
+      </div>
+      <div class="inp-wrap"><span class="inp-prefix">&#8377;</span><input type="text" class="amt-inp" id="inp-re" placeholder="0" inputmode="numeric"></div>
+    </div>
+    <div class="hint">&#128161; <strong>Lifetime limit: 2 residential properties.</strong> FEMA allows NRIs to repatriate sale proceeds of maximum 2 residential properties. No limit on commercial property.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Retirement &amp; Insurance</div>
+    <div class="card-sub">Often forgotten. Check every old employer for EPF accounts.</div>
+
+    <div class="asset-group-label">EPF (Employee Provident Fund)</div>
+    <div class="asset-row">
+      <div class="asset-info">
+        <div class="asset-name">EPF Balance</div>
+        <div class="asset-note">Withdrawal tax depends on total service years.</div>
+        <div class="toggle-group">
+          <button class="tog-btn active" id="epf-5y" data-epf="yes">5+ years service (tax-free)</button>
+          <button class="tog-btn" id="epf-less" data-epf="no">Under 5 years (10% TDS)</button>
+        </div>
+      </div>
+      <div class="inp-wrap"><span class="inp-prefix">&#8377;</span><input type="text" class="amt-inp" id="inp-epf" placeholder="0" inputmode="numeric"></div>
+    </div>
+
+    <div class="asset-group-label">PPF (Public Provident Fund)</div>
+    <div class="asset-row">
+      <div class="asset-info"><div class="asset-name">PPF Balance</div><div class="asset-note">Tax-free at maturity. Cannot contribute as NRI &#8212; stop contributions immediately if you have not done so.</div></div>
+      <div class="inp-wrap"><span class="inp-prefix">&#8377;</span><input type="text" class="amt-inp" id="inp-ppf" placeholder="0" inputmode="numeric"></div>
+    </div>
+
+    <div class="asset-group-label">LIC / Insurance Surrender Value</div>
+    <div class="asset-row">
+      <div class="asset-info"><div class="asset-name">Insurance Surrender Value</div><div class="asset-note">Generally tax-free under Section 10(10D) if premium &lt;10% of sum assured.</div></div>
+      <div class="inp-wrap"><span class="inp-prefix">&#8377;</span><input type="text" class="amt-inp" id="inp-lic" placeholder="0" inputmode="numeric"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Ongoing India Income</div>
+    <div class="card-sub">This flows into NRO each month. It is not a one-time transfer &#8212; it needs an ongoing tax + repatriation plan.</div>
+    <div class="asset-row">
+      <div class="asset-info"><div class="asset-name">Rental Income (monthly)</div><div class="asset-note">Taxable as NRI at ~21% effective (after 30% standard deduction). Flows to NRO each month.</div></div>
+      <div class="inp-wrap"><span class="inp-prefix">&#8377;</span><input type="text" class="amt-inp" id="inp-rental" placeholder="0" inputmode="numeric"></div>
+    </div>
+    <div class="hint">&#128161; <strong>Small amounts matter.</strong> Even &#8377;30,000/month in rental = &#8377;3.6L/year. At 21% effective tax that is &#8377;75k/year in Indian tax. Plus FBAR reporting obligations in the US. There is no threshold below which you can ignore Indian income.</div>
+  </div>
+
+  <!-- LIVE SUMMARY TABLE -->
+  <div class="card" id="summary-card" style="display:none;">
+    <div class="card-title">&#128202; Your Asset Summary</div>
+    <div class="card-sub">Based on what you entered above. Tax estimates are rough &#8212; for planning only.</div>
+    <div class="tbl-wrap">
+      <table id="summary-table">
+        <thead><tr><th>Asset</th><th>Value (&#8377;)</th><th>Est. Tax</th><th>Net (&#8377;)</th><th>Path</th></tr></thead>
+        <tbody id="summary-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="step-nav-btns">
+    <button class="btn-primary" id="btn-1-next">Next: Risk Check &#8594;</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     STEP 2: RISK FLAGS
+═══════════════════════════════════════════ -->
+<div class="step-panel" id="panel-2">
+
+  <div class="section-header">
+    <div class="section-icon">&#9888;&#65039;</div>
+    <div class="section-meta">
+      <h2>Where Things Usually Break</h2>
+      <p>These are the gaps that block transfers, create penalties, or cost serious money. Check every one that applies.</p>
+    </div>
+  </div>
+
+  <div id="risk-meter-card" class="risk-meter low">
+    <div class="risk-score-num" id="risk-num">0</div>
+    <div>
+      <div class="risk-score-lbl" id="risk-lbl">No flags detected &#8212; looking clean</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:2px;" id="risk-sub">Check the items below honestly</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Account &amp; Status Issues</div>
+    <div class="card-sub">These are FEMA violations or high-urgency gaps. Fix before initiating any transfers.</div>
+
+    <div class="risk-item auto-flagged" id="rf-resident" style="display:none;">
+      <div class="risk-cb">&#10003;</div>
+      <div class="risk-body">
+        <div class="risk-lbl">&#10071; Still holding a resident savings account as NRI</div>
+        <div class="risk-why">Detected from Step 1. This is a FEMA violation. Convert to NRO immediately &#8212; tell your bank in writing you are an NRI.</div>
+      </div>
+    </div>
+
+    <div class="risk-item" id="rf-banks" data-flag="banks">
+      <div class="risk-cb" id="rcb-banks"></div>
+      <div class="risk-body">
+        <div class="risk-lbl">&#10071; Have not informed all Indian banks of NRI status</div>
+        <div class="risk-why">Banks need written notification. Failure to notify is a FEMA violation even if unintentional. Required before any repatriation.</div>
+      </div>
+    </div>
+
+    <div class="risk-item" id="rf-15cacb" data-flag="15cacb">
+      <div class="risk-cb" id="rcb-15cacb"></div>
+      <div class="risk-body">
+        <div class="risk-lbl">&#10071; Planning to remit NRO funds without Form 15CA/15CB</div>
+        <div class="risk-why">Banks will block the transfer. Form 15CB is a CA certificate (not self-filed). Form 15CA is your self-declaration on incometax.gov.in. Both required for most NRO remittances above &#8377;5L.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Tax &amp; Compliance Gaps</div>
+    <div class="card-sub">These create silent penalties that compound. Check honestly.</div>
+
+    <div class="risk-item" id="rf-costbasis" data-flag="costbasis">
+      <div class="risk-cb" id="rcb-costbasis"></div>
+      <div class="risk-body">
+        <div class="risk-lbl">&#10071; No cost basis tracked for MF or stocks</div>
+        <div class="risk-why">Without original purchase price, you cannot compute capital gains, file accurately, or claim the correct tax. Get purchase history from CAMS, KFintech, or your broker before selling anything.</div>
+      </div>
+    </div>
+
+    <div class="risk-item" id="rf-itr" data-flag="itr">
+      <div class="risk-cb" id="rcb-itr"></div>
+      <div class="risk-body">
+        <div class="risk-lbl">&#10071; Indian ITR not filed for years with India income</div>
+        <div class="risk-why">Banks will ask for ITR acknowledgments before large repatriations. Missing filings = blocked transfers. File all pending ITRs before initiating transfers.</div>
+      </div>
+    </div>
+
+    <div class="risk-item" id="rf-unpaidtax" data-flag="unpaidtax">
+      <div class="risk-cb" id="rcb-unpaidtax"></div>
+      <div class="risk-body">
+        <div class="risk-lbl">&#10071; Unpaid Indian taxes &#8212; advance tax, capital gains, or TDS shortfall</div>
+        <div class="risk-why">Outstanding tax dues can block repatriation and attract penalties of 1-1.5% per month. Your CA needs to check and clear all dues before remittance.</div>
+      </div>
+    </div>
+
+    <div class="risk-item" id="rf-fbar" data-flag="fbar">
+      <div class="risk-cb" id="rcb-fbar"></div>
+      <div class="risk-body">
+        <div class="risk-lbl">&#10071; FBAR (FinCEN 114) not filed in the US</div>
+        <div class="risk-why">Required if total foreign accounts exceeded $10,000 at any point in the year. Includes NRE, NRO, MF folios, demat. Penalty: $10,000 per violation (non-willful). Check every prior year.</div>
+      </div>
+    </div>
+
+    <div class="risk-item" id="rf-fatca" data-flag="fatca">
+      <div class="risk-cb" id="rcb-fatca"></div>
+      <div class="risk-body">
+        <div class="risk-lbl">&#10071; Form 8938 (FATCA) not filed for high-balance years</div>
+        <div class="risk-why">Required when foreign financial assets exceed $50K end of year (single) or $75K at any point. Filed with federal return. $10,000 penalty for failure. Your US CPA should check prior years.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Estate &amp; Access Gaps</div>
+    <div class="card-sub">Silent risks &#8212; invisible until there is a crisis.</div>
+
+    <div class="risk-item" id="rf-nominee" data-flag="nominee">
+      <div class="risk-cb" id="rcb-nominee"></div>
+      <div class="risk-body">
+        <div class="risk-lbl">&#10071; No nominee on some or all accounts</div>
+        <div class="risk-why">Without nominees, funds get locked in succession proceedings. Add nominees to every account, MF folio, and demat. Takes 10 minutes per account.</div>
+      </div>
+    </div>
+
+    <div class="risk-item" id="rf-spouse" data-flag="spouse">
+      <div class="risk-cb" id="rcb-spouse"></div>
+      <div class="risk-body">
+        <div class="risk-lbl">&#10071; Spouse cannot access accounts or India property independently</div>
+        <div class="risk-why">If something happened tonight, could your spouse access every account and manage the repatriation alone? Power of Attorney for India + a shared document of all accounts is the fix.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step-nav-btns">
+    <button class="btn-secondary" id="btn-2-back">&#8592; Back</button>
+    <button class="btn-primary" id="btn-2-next">Next: See Your Plan &#8594;</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     STEP 3: REPATRIATION PLAN
+═══════════════════════════════════════════ -->
+<div class="step-panel" id="panel-3">
+
+  <div class="fx-row">
+    <span class="fx-lbl">&#128260; USD/INR exchange rate used for estimates</span>
+    <span style="font-size:13px;color:var(--muted);">&#8377;</span>
+    <input type="text" class="fx-inp" id="inp-fxrate" value="84" inputmode="numeric">
+    <span style="font-size:13px;color:var(--muted);">= $1</span>
+  </div>
+
+  <!-- HERO SUMMARY -->
+  <div class="plan-hero" id="plan-hero-card">
+    <h3>&#128202; Your Repatriation Summary</h3>
+    <p>Based on your asset inventory. Tax estimates are rough &#8212; actual figures depend on cost basis and timing.</p>
+    <div class="plan-totals">
+      <div class="plan-total-tile">
+        <div class="plan-total-lbl">Total gross (India)</div>
+        <div class="plan-total-val" id="ph-gross">&#8212;</div>
+        <div class="plan-total-sub" id="ph-gross-usd"></div>
+      </div>
+      <div class="plan-total-tile">
+        <div class="plan-total-lbl">Estimated net (after tax)</div>
+        <div class="plan-total-val" id="ph-net">&#8212;</div>
+        <div class="plan-total-sub" id="ph-net-usd"></div>
+      </div>
+      <div class="plan-total-tile">
+        <div class="plan-total-lbl">&#9989; Move immediately</div>
+        <div class="plan-total-val" id="ph-imm">&#8212;</div>
+        <div class="plan-total-sub" id="ph-imm-usd">NRE &#8212; no paperwork</div>
+      </div>
+      <div class="plan-total-tile">
+        <div class="plan-total-lbl">&#128203; Estimated tax (India)</div>
+        <div class="plan-total-val" id="ph-tax" style="color:#ff9a9a;">&#8212;</div>
+        <div class="plan-total-sub">Rough planning estimate</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACTIVE RISK FLAGS REPEAT -->
+  <div id="plan-risk-flags" style="display:none;">
+    <div class="warn-card" id="plan-warn-card">
+      <h3>&#9888; Active Risk Flags</h3>
+      <div id="plan-risk-list"></div>
+    </div>
+  </div>
+
+  <!-- PATH CARDS (dynamically generated) -->
+  <div id="path-cards"></div>
+
+  <!-- TIMELINE -->
+  <div class="card">
+    <div class="card-title">&#128197; Execution Timeline</div>
+    <div class="card-sub">Most NRIs can complete the bulk of repatriation in 3&#8211;4 weeks if paperwork is ready.</div>
+    <div class="timeline" id="timeline-div">
+      <div class="tl-row">
+        <div class="tl-week">
+          <div class="tl-dot">1</div>
+          <div class="tl-wk-lbl">Week 1 &#8212; Consolidate</div>
+          <ul class="tl-items">
+            <li>Convert resident accounts to NRO</li>
+            <li>Notify all banks of NRI status</li>
+            <li>Collect cost basis for MF &amp; stocks</li>
+            <li>Hire CA experienced in NRI / FEMA</li>
+            <li>Get consolidated account statement (CAMS)</li>
+            <li>List all accounts, MF folios, property docs</li>
+          </ul>
+        </div>
+        <div class="step-line" style="margin:14px 12px 0;flex-shrink:0;width:24px;height:2px;background:var(--border);align-self:auto;"></div>
+        <div class="tl-week">
+          <div class="tl-dot">2</div>
+          <div class="tl-wk-lbl">Week 2 &#8212; Tax + CA</div>
+          <ul class="tl-items">
+            <li>Compute income &amp; capital gains</li>
+            <li>Pay any pending Indian advance tax</li>
+            <li>File pending ITRs</li>
+            <li>Get CA to issue Form 15CB</li>
+            <li>File Form 15CA on tax portal</li>
+            <li>Submit A2 form to your bank</li>
+          </ul>
+        </div>
+        <div class="step-line" style="margin:14px 12px 0;flex-shrink:0;width:24px;height:2px;background:var(--border);align-self:auto;"></div>
+        <div class="tl-week">
+          <div class="tl-dot">3</div>
+          <div class="tl-wk-lbl">Week 3 &#8212; Remit</div>
+          <ul class="tl-items">
+            <li>Wire NRE funds first (no limit)</li>
+            <li>SWIFT transfer NRO to US bank</li>
+            <li>Keep all transfer records</li>
+            <li>Brief US CPA on source of funds</li>
+            <li>File FBAR by April 15</li>
+            <li>Claim FTC on Form 1116</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAX LAYER EXPLAINER -->
+  <div class="card">
+    <div class="card-title">&#127919; India + US Tax Layer</div>
+    <div class="card-sub">The most misunderstood part. &#8220;Already taxed in India&#8221; does not mean &#8220;done.&#8221;</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px;">
+      <div style="background:#f5f3ee;border-radius:10px;padding:14px;">
+        <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:8px;">India side</div>
+        <div style="font-size:13px;color:#444;line-height:1.7;">
+          &#183; TDS may already be deducted at source<br>
+          &#183; Capital gains tax applies on sale<br>
+          &#183; Rental income taxable as India income<br>
+          &#183; File ITR to claim excess TDS refund
+        </div>
+      </div>
+      <div style="background:#edf2fb;border-radius:10px;padding:14px;">
+        <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#1a4276;margin-bottom:8px;">US side</div>
+        <div style="font-size:13px;color:#444;line-height:1.7;">
+          &#183; You report global income to IRS<br>
+          &#183; Claim Foreign Tax Credit (Form 1116)<br>
+          &#183; Avoids double taxation via DTAA<br>
+          &#183; FBAR + FATCA reporting required
+        </div>
+      </div>
+    </div>
+    <div class="hint" style="margin-top:14px;">&#128161; <strong>Map each income type separately.</strong> Interest, capital gains, and rental income have different tax treatment in both countries. Your US CPA and India CA need to work together on the numbers &#8212; not in isolation.</div>
+  </div>
+
+  <div class="step-nav-btns">
+    <button class="btn-secondary" id="btn-3-back">&#8592; Back</button>
+    <button class="btn-gold" id="btn-3-next">Go to Action Checklist &#8594;</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     STEP 4: ACTION CHECKLIST
+═══════════════════════════════════════════ -->
+<div class="step-panel" id="panel-4">
+
+  <div class="cl-progress">
+    <div><span class="cl-score-num" id="cl-score">0</span><span style="font-size:13px;color:rgba(255,255,255,0.35);"> / 42</span></div>
+    <div class="cl-track-wrap">
+      <div class="cl-track"><div class="cl-fill" id="cl-fill"></div></div>
+      <div class="cl-lbl" id="cl-lbl">Start with Phase 1 &#8212; Establish Your Status</div>
+    </div>
+  </div>
+
+  <!-- PHASE 1 -->
+  <div class="phase-card open" id="ph1">
+    <div class="phase-hdr" data-toggleid="ph1">
+      <div class="phase-ico">&#128373;&#65039;</div>
+      <div class="phase-hdr-meta">
+        <div class="phase-num">Phase 1</div>
+        <div class="phase-title">Establish Your New Status</div>
+        <div class="phase-sub">Legal &amp; tax identity first &#8212; everything flows from this</div>
+      </div>
+      <div class="phase-right"><div class="phase-step-count">5 steps</div><div class="phase-done-count" id="dc-ph1"></div></div>
+      <div class="chevron">&#9662;</div>
+    </div>
+    <div class="phase-body">
+      <div class="ctx-box">&#128161; <strong>Why this comes first.</strong> Your ability to repatriate, your tax obligations, and which accounts you can hold all depend on your FEMA residential status. Establish this before doing anything else.</div>
+      <div class="grp-label">Understand Your Status</div>
+      <div class="task" data-id="ph1-0-0" data-pid="ph1"><div class="task-chk"></div><div class="task-body"><div class="task-text">Confirm you are NRI under FEMA</div><div class="task-detail">Fewer than 182 days in India in the financial year. This determines repatriation rights &#8212; not your visa status.</div><span class="tag t-legal">&#9878;&#65039; Legal / FEMA</span></div></div>
+      <div class="task" data-id="ph1-0-1" data-pid="ph1"><div class="task-chk"></div><div class="task-body"><div class="task-text">Update residential status with all Indian banks in writing</div><div class="task-detail">Inform each bank you are NRI. Required by FEMA. Failure is a violation even if unintentional. Do this before any transfers.</div><span class="tag t-urgent">&#9889; Do this first</span></div></div>
+      <div class="task" data-id="ph1-0-2" data-pid="ph1"><div class="task-chk"></div><div class="task-body"><div class="task-text">Convert resident savings accounts to NRO immediately</div><div class="task-detail">Holding a resident savings account as an NRI is a FEMA violation. Convert every account &#8212; this is the single highest-urgency fix.</div><span class="tag t-urgent">&#9889; Do this first</span></div></div>
+      <div class="grp-label">Professional Setup</div>
+      <div class="task" data-id="ph1-1-0" data-pid="ph1"><div class="task-chk"></div><div class="task-body"><div class="task-text">Hire a CA experienced in NRI + FEMA + 15CA/15CB</div><div class="task-detail">Not a general practice CA. Ask specifically for experience filing Form 15CA/15CB and working with NRI clients on remittances and ITR filing.</div><span class="tag t-urgent">&#9889; Do this first</span></div></div>
+      <div class="task" data-id="ph1-1-1" data-pid="ph1"><div class="task-chk"></div><div class="task-body"><div class="task-text">Run a full inventory of every India financial account</div><div class="task-detail">NRE/NRO accounts, FDs, MF folios (CAMS CAS), demat, property, EPF (EPFO portal), PPF, LIC policies, NPS. You cannot move what you do not know exists.</div><span class="tag t-once">&#9745;&#65039; One-time</span></div></div>
+    </div>
+  </div>
+
+  <!-- PHASE 2 -->
+  <div class="phase-card" id="ph2">
+    <div class="phase-hdr" data-toggleid="ph2">
+      <div class="phase-ico">&#127974;</div>
+      <div class="phase-hdr-meta">
+        <div class="phase-num">Phase 2</div>
+        <div class="phase-title">Sort Your Bank Accounts</div>
+        <div class="phase-sub">NRE = free. NRO = paperwork. Know the difference.</div>
+      </div>
+      <div class="phase-right"><div class="phase-step-count">8 steps</div><div class="phase-done-count" id="dc-ph2"></div></div>
+      <div class="chevron">&#9662;</div>
+    </div>
+    <div class="phase-body">
+      <div class="ctx-box">&#128161; <strong>NRE vs NRO is where most people get stuck.</strong> NRE funds are freely repatriable &#8212; no limit, no tax, wire directly. NRO funds require Form 15CA/15CB and proof of tax payment, limited to $1M per financial year.</div>
+      <div class="grp-label">NRE &#8212; the easy path</div>
+      <div class="task" data-id="ph2-0-0" data-pid="ph2"><div class="task-chk"></div><div class="task-body"><div class="task-text">Identify all NRE savings accounts and FDs</div><div class="task-detail">These hold money that originated abroad. Interest is tax-free in India.</div><span class="tag t-bank">&#127974; Bank action</span></div></div>
+      <div class="task" data-id="ph2-0-1" data-pid="ph2"><div class="task-chk"></div><div class="task-body"><div class="task-text">Wire NRE funds directly to your US bank</div><div class="task-detail">No limit. No TDS. No Form 15CA. No CA certificate. Just a standard wire. Do this first &#8212; it is the cleanest path.</div><span class="tag t-bank">&#127974; Bank action</span></div></div>
+      <div class="task" data-id="ph2-0-2" data-pid="ph2"><div class="task-chk"></div><div class="task-body"><div class="task-text">Calculate premature closure penalty on NRE FDs before breaking</div><div class="task-detail">Typically 0.5&#8211;1% interest penalty. Calculate if waiting until maturity saves more.</div><span class="tag t-once">&#9745;&#65039; One-time</span></div></div>
+      <div class="grp-label">NRO &#8212; the paperwork path</div>
+      <div class="task" data-id="ph2-1-0" data-pid="ph2"><div class="task-chk"></div><div class="task-body"><div class="task-text">Understand the $1M annual NRO repatriation limit</div><div class="task-detail">FEMA: up to USD $1M from NRO per financial year (April&#8211;March) per person. A couple can move $2M/year combined. Spread large amounts across financial years.</div><span class="tag t-legal">&#9878;&#65039; Legal / FEMA</span></div></div>
+      <div class="task" data-id="ph2-1-1" data-pid="ph2"><div class="task-chk"></div><div class="task-body"><div class="task-text">Compute income, pay any pending taxes</div><div class="task-detail">Your CA must verify all Indian taxes are paid before certifying 15CB. Outstanding dues block the remittance.</div><span class="tag t-tax">&#128222; Tax matter</span></div></div>
+      <div class="task" data-id="ph2-1-2" data-pid="ph2"><div class="task-chk"></div><div class="task-body"><div class="task-text">Get Form 15CB from your CA</div><div class="task-detail">CA certifies taxes are paid on funds being repatriated. Cannot be self-filed. One certificate per remittance.</div><span class="tag t-tax">&#128222; Tax matter</span></div></div>
+      <div class="task" data-id="ph2-1-3" data-pid="ph2"><div class="task-chk"></div><div class="task-body"><div class="task-text">File Form 15CA on incometax.gov.in</div><div class="task-detail">Your self-declaration before the remittance. Required for most remittances above &#8377;5L. File after 15CB is ready.</div><span class="tag t-tax">&#128222; Tax matter</span></div></div>
+      <div class="task" data-id="ph2-1-4" data-pid="ph2"><div class="task-chk"></div><div class="task-body"><div class="task-text">Submit your bank&#8217;s A2 form + 15CA/15CB to process wire</div><div class="task-detail">Banks require their own A2 form (Purpose of Remittance) plus 15CA/15CB. Ask your specific bank for their current checklist before visiting.</div><span class="tag t-bank">&#127974; Bank action</span></div></div>
+      <div class="task" data-id="ph2-1-5" data-pid="ph2"><div class="task-chk"></div><div class="task-body"><div class="task-text">Collect Form 16A for all TDS deducted on NRO interest</div><div class="task-detail">30% TDS is auto-deducted on NRO interest. Form 16A lets you claim it as credit in both your Indian ITR and US FTC filing.</div><span class="tag t-tax">&#128222; Tax matter</span></div></div>
+      <div class="grp-label">Account Hygiene</div>
+      <div class="task" data-id="ph2-2-0" data-pid="ph2"><div class="task-chk"></div><div class="task-body"><div class="task-text">Formally close dormant accounts you no longer need</div><div class="task-detail">Do not just stop using them. Formally close &#8212; dormant NRO accounts create ongoing compliance obligations.</div><span class="tag t-once">&#9745;&#65039; One-time</span></div></div>
+      <div class="task" data-id="ph2-2-1" data-pid="ph2"><div class="task-chk"></div><div class="task-body"><div class="task-text">Update nominees on all active accounts</div><div class="task-detail">Add nominees to every bank account, MF folio, and demat. Cross-border estate cleanup without nominees is a nightmare.</div><span class="tag t-legal">&#9878;&#65039; Legal / FEMA</span></div></div>
+    </div>
+  </div>
+
+  <!-- PHASE 3 -->
+  <div class="phase-card" id="ph3">
+    <div class="phase-hdr" data-toggleid="ph3">
+      <div class="phase-ico">&#128202;</div>
+      <div class="phase-hdr-meta">
+        <div class="phase-num">Phase 3</div>
+        <div class="phase-title">Liquidate Investments</div>
+        <div class="phase-sub">MF, stocks, FDs, PPF &#8212; sell, pay tax, move to NRO, remit</div>
+      </div>
+      <div class="phase-right"><div class="phase-step-count">9 steps</div><div class="phase-done-count" id="dc-ph3"></div></div>
+      <div class="chevron">&#9662;</div>
+    </div>
+    <div class="phase-body">
+      <div class="ctx-box">&#128161; <strong>The flow for all investments is the same:</strong> Sell &#8594; TDS deducted at source &#8594; Proceeds hit NRO &#8594; 15CA/15CB &#8594; Wire to US. Know the TDS rate before you sell.</div>
+      <div class="grp-label">Mutual Funds</div>
+      <div class="task" data-id="ph3-0-0" data-pid="ph3"><div class="task-chk"></div><div class="task-body"><div class="task-text">Get Consolidated Account Statement from CAMS or KFintech</div><div class="task-detail">Request CAS using your PAN and email. Shows every folio across all AMCs. Do this before anything else.</div><span class="tag t-once">&#9745;&#65039; One-time</span></div></div>
+      <div class="task" data-id="ph3-0-1" data-pid="ph3"><div class="task-chk"></div><div class="task-body"><div class="task-text">Collect original purchase history and cost basis</div><div class="task-detail">Without cost basis you cannot compute capital gains, file accurately, or claim the correct tax. Get from CAMS, KFintech, or your broker&#8217;s statement.</div><span class="tag t-urgent">&#9889; Do this first</span></div></div>
+      <div class="task" data-id="ph3-0-2" data-pid="ph3"><div class="task-chk"></div><div class="task-body"><div class="task-text">Update KYC to NRI status with each AMC before redeeming</div><div class="task-detail">Resident KYC may block redemption. Update to NRI KYC first. Takes a few days per AMC.</div><span class="tag t-once">&#9745;&#65039; One-time</span></div></div>
+      <div class="task" data-id="ph3-0-3" data-pid="ph3"><div class="task-chk"></div><div class="task-body"><div class="task-text">Redeem MF &#8212; TDS deducted, proceeds hit NRO, then remit</div><div class="task-detail">Equity: 15% STCG (&lt;1yr), 12.5% LTCG (&gt;1yr on gains above &#8377;1.25L). Debt funds: 30% TDS flat for NRIs.</div><span class="tag t-tax">&#128222; Tax matter</span></div></div>
+      <div class="grp-label">Stocks &amp; Demat</div>
+      <div class="task" data-id="ph3-1-0" data-pid="ph3"><div class="task-chk"></div><div class="task-body"><div class="task-text">Ensure broker has NRI status updated before selling</div><div class="task-detail">Update demat/broker account to NRI status. Some brokers require a fresh NRI demat linked to NRE/NRO.</div><span class="tag t-once">&#9745;&#65039; One-time</span></div></div>
+      <div class="task" data-id="ph3-1-1" data-pid="ph3"><div class="task-chk"></div><div class="task-body"><div class="task-text">Sell stocks &#8212; proceeds to NRO &#8212; then remit</div><div class="task-detail">Equity: 15% STCG (&lt;1yr), 12.5% LTCG (&gt;1yr above &#8377;1.25L). Do not assume TDS certificates from broker will automatically flow to your ITR &#8212; check each one.</div><span class="tag t-tax">&#128222; Tax matter</span></div></div>
+      <div class="grp-label">PPF (Public Provident Fund)</div>
+      <div class="task" data-id="ph3-2-0" data-pid="ph3"><div class="task-chk"></div><div class="task-body"><div class="task-text">Stop PPF contributions immediately if you have not already</div><div class="task-detail">Contributing to PPF after becoming NRI is a FEMA violation. The most commonly missed rule. Stop now.</div><span class="tag t-urgent">&#9889; Do this first</span></div></div>
+      <div class="task" data-id="ph3-2-1" data-pid="ph3"><div class="task-chk"></div><div class="task-body"><div class="task-text">Hold PPF until 15-year maturity &#8212; then withdraw tax-free via NRO</div><div class="task-detail">NRIs can hold (not contribute to) existing PPF. Entire corpus is tax-free on maturity.</div><span class="tag t-legal">&#9878;&#65039; Legal / FEMA</span></div></div>
+      <div class="task" data-id="ph3-2-2" data-pid="ph3"><div class="task-chk"></div><div class="task-body"><div class="task-text">File ITR for year of investment sale to claim any TDS refund</div><div class="task-detail">If TDS was deducted at 30% but actual liability is lower (especially for smaller gains), file ITR to claim refund to NRO account.</div><span class="tag t-tax">&#128222; Tax matter</span></div></div>
+    </div>
+  </div>
+
+  <!-- PHASE 4 -->
+  <div class="phase-card" id="ph4">
+    <div class="phase-hdr" data-toggleid="ph4">
+      <div class="phase-ico">&#127968;</div>
+      <div class="phase-hdr-meta">
+        <div class="phase-num">Phase 4</div>
+        <div class="phase-title">Deal with Real Estate</div>
+        <div class="phase-sub">TDS, capital gains, repatriation limits &#8212; the most complex piece</div>
+      </div>
+      <div class="phase-right"><div class="phase-step-count">7 steps</div><div class="phase-done-count" id="dc-ph4"></div></div>
+      <div class="chevron">&#9662;</div>
+    </div>
+    <div class="phase-body">
+      <div class="ctx-box">&#128161; <strong>Real estate is the hardest asset to move.</strong> High TDS, multiple approvals, lifetime limit of 2 residential properties. The buyer is legally required to deduct TDS from your sale amount &#8212; plan for it upfront.</div>
+      <div class="grp-label">Before You Sell</div>
+      <div class="task" data-id="ph4-0-0" data-pid="ph4"><div class="task-chk"></div><div class="task-body"><div class="task-text">Gather all original purchase documents for cost basis</div><div class="task-detail">Sale deed, registration, builder agreement, payment receipts, home loan closure certificate. Needed for capital gains calculation and to potentially apply for lower TDS.</div><span class="tag t-once">&#9745;&#65039; One-time</span></div></div>
+      <div class="task" data-id="ph4-0-1" data-pid="ph4"><div class="task-chk"></div><div class="task-body"><div class="task-text">Brief the buyer: they must deduct TDS from sale price</div><div class="task-detail">LTCG (&gt;2 years): ~23% effective TDS. STCG (&lt;2 years): ~35% effective TDS. This is not optional for the buyer. Budget for it in your asking price.</div><span class="tag t-urgent">&#9889; Do this first</span></div></div>
+      <div class="task" data-id="ph4-0-2" data-pid="ph4"><div class="task-chk"></div><div class="task-body"><div class="task-text">Apply for lower TDS certificate under Section 195(3)</div><div class="task-detail">If actual capital gains tax is lower than TDS rate, your CA can apply to Income Tax Dept for a certificate allowing buyer to deduct less. File early &#8212; takes 30&#8211;60 days.</div><span class="tag t-tax">&#128222; Tax matter</span></div></div>
+      <div class="grp-label">After Sale</div>
+      <div class="task" data-id="ph4-1-0" data-pid="ph4"><div class="task-chk"></div><div class="task-body"><div class="task-text">Get Form 16A (TDS certificate) from buyer</div><div class="task-detail">Buyer must confirm TDS deposited with government. Use this to claim credit in your Indian ITR and potentially recover excess TDS.</div><span class="tag t-tax">&#128222; Tax matter</span></div></div>
+      <div class="task" data-id="ph4-1-1" data-pid="ph4"><div class="task-chk"></div><div class="task-body"><div class="task-text">File ITR for year of sale &#8212; claim excess TDS refund</div><div class="task-detail">Capital gains must be declared even as NRI. If TDS exceeded actual tax liability, ITR filing triggers the refund to NRO.</div><span class="tag t-tax">&#128222; Tax matter</span></div></div>
+      <div class="task" data-id="ph4-1-2" data-pid="ph4"><div class="task-chk"></div><div class="task-body"><div class="task-text">Know the lifetime limit: 2 residential properties max</div><div class="task-detail">FEMA allows repatriation of proceeds from up to 2 residential properties in a lifetime. No limit on commercial property.</div><span class="tag t-legal">&#9878;&#65039; Legal / FEMA</span></div></div>
+      <div class="task" data-id="ph4-1-3" data-pid="ph4"><div class="task-chk"></div><div class="task-body"><div class="task-text">Submit 15CA/15CB with property docs &#8212; allow 2&#8211;4 weeks</div><div class="task-detail">Additional docs: sale deed copy, capital gains calculation, ITR acknowledgment, TDS certificate. Banks take longer for large property remittances.</div><span class="tag t-bank">&#127974; Bank action</span></div></div>
+    </div>
+  </div>
+
+  <!-- PHASE 5 -->
+  <div class="phase-card" id="ph5">
+    <div class="phase-hdr" data-toggleid="ph5">
+      <div class="phase-ico">&#128737;&#65039;</div>
+      <div class="phase-hdr-meta">
+        <div class="phase-num">Phase 5</div>
+        <div class="phase-title">Insurance &amp; Retirement Funds</div>
+        <div class="phase-sub">LIC, EPF, NPS, Gratuity &#8212; do not leave money behind</div>
+      </div>
+      <div class="phase-right"><div class="phase-step-count">7 steps</div><div class="phase-done-count" id="dc-ph5"></div></div>
+      <div class="chevron">&#9662;</div>
+    </div>
+    <div class="phase-body">
+      <div class="ctx-box">&#128161; <strong>These are often forgotten.</strong> EPF from a job you left in 2012. LIC your parents took in your name. A dormant NPS account. Run a full inventory first.</div>
+      <div class="grp-label">EPF</div>
+      <div class="task" data-id="ph5-0-0" data-pid="ph5"><div class="task-chk"></div><div class="task-body"><div class="task-text">Withdraw EPF if not returning to Indian employment</div><div class="task-detail">Check EPFO portal for all past employer accounts via UAN. Inactive EPF still earns 8.25% but stops compounding after 36 months of no contribution.</div><span class="tag t-once">&#9745;&#65039; One-time</span></div></div>
+      <div class="task" data-id="ph5-0-1" data-pid="ph5"><div class="task-chk"></div><div class="task-body"><div class="task-text">Check service total: 5+ years = tax-free EPF withdrawal</div><div class="task-detail">Total service across all employers. If under 5 years, 10% TDS applies. File ITR to claim refund if actual liability is lower.</div><span class="tag t-tax">&#128222; Tax matter</span></div></div>
+      <div class="task" data-id="ph5-0-2" data-pid="ph5"><div class="task-chk"></div><div class="task-body"><div class="task-text">Claim any pending gratuity from last Indian employer</div><div class="task-detail">5+ years service = entitled to gratuity. Up to &#8377;20L is tax-free. Contact HR of last employer if not paid.</div><span class="tag t-once">&#9745;&#65039; One-time</span></div></div>
+      <div class="grp-label">NPS</div>
+      <div class="task" data-id="ph5-1-0" data-pid="ph5"><div class="task-chk"></div><div class="task-body"><div class="task-text">Decide: premature NPS exit vs hold to 60</div><div class="task-detail">Premature exit: 80% must buy annuity in India (only 20% lump sum). At 60: 60% lump sum (tax-free), 40% mandatory annuity. Model both options with your CA.</div><span class="tag t-legal">&#9878;&#65039; Legal / FEMA</span></div></div>
+      <div class="grp-label">LIC &amp; Insurance</div>
+      <div class="task" data-id="ph5-2-0" data-pid="ph5"><div class="task-chk"></div><div class="task-body"><div class="task-text">Inventory all LIC, ULIP, endowment policies</div><div class="task-detail">Check surrender value vs maturity value. Sometimes waiting to maturity beats surrendering early, especially for policies in final 3 years.</div><span class="tag t-once">&#9745;&#65039; One-time</span></div></div>
+      <div class="task" data-id="ph5-2-1" data-pid="ph5"><div class="task-chk"></div><div class="task-body"><div class="task-text">Surrender LIC &#8212; proceeds credited to NRO, then remit</div><div class="task-detail">Tax-free under Section 10(10D) if premium &lt;10% of sum assured. Stop premium payments on policies you plan to surrender.</div><span class="tag t-bank">&#127974; Bank action</span></div></div>
+      <div class="task" data-id="ph5-2-2" data-pid="ph5"><div class="task-chk"></div><div class="task-body"><div class="task-text">Stop premium payments on policies you plan to surrender</div><div class="task-detail">Do not keep paying from NRO if you are going to exit. Ask about the paid-up option &#8212; you stop paying but the policy stays alive at a reduced amount.</div><span class="tag t-once">&#9745;&#65039; One-time</span></div></div>
+    </div>
+  </div>
+
+  <!-- PHASE 6 -->
+  <div class="phase-card" id="ph6">
+    <div class="phase-hdr" data-toggleid="ph6">
+      <div class="phase-ico">&#128203;</div>
+      <div class="phase-hdr-meta">
+        <div class="phase-num">Phase 6</div>
+        <div class="phase-title">India + US Tax Filings</div>
+        <div class="phase-sub">Stay compliant on both sides &#8212; missing filings block transfers</div>
+      </div>
+      <div class="phase-right"><div class="phase-step-count">6 steps</div><div class="phase-done-count" id="dc-ph6"></div></div>
+      <div class="chevron">&#9662;</div>
+    </div>
+    <div class="phase-body">
+      <div class="ctx-box">&#128161; <strong>Both countries require action.</strong> India wants your ITR. The US wants your FBAR and FATCA. Missing either creates penalties and blocks remittances.</div>
+      <div class="grp-label">India ITR</div>
+      <div class="task" data-id="ph6-0-0" data-pid="ph6"><div class="task-chk"></div><div class="task-body"><div class="task-text">File ITR for all years you had India income above &#8377;2.5L</div><div class="task-detail">Rental income, capital gains, NRO interest, dividends all count. NRE interest is exempt. File pending years before initiating large transfers.</div><span class="tag t-tax">&#128222; Tax matter</span></div></div>
+      <div class="task" data-id="ph6-0-1" data-pid="ph6"><div class="task-chk"></div><div class="task-body"><div class="task-text">Claim DTAA relief &#8212; attach Form 67 with Indian ITR</div><div class="task-detail">India&#8211;US DTAA lets you credit Indian taxes against US tax liability. File Form 67 with your Indian ITR. Your CA and US CPA need to coordinate the numbers.</div><span class="tag t-tax">&#128222; Tax matter</span></div></div>
+      <div class="task" data-id="ph6-0-2" data-pid="ph6"><div class="task-chk"></div><div class="task-body"><div class="task-text">Claim excess TDS refunds via ITR</div><div class="task-detail">30% TDS on NRO interest or MF debt redemptions may exceed actual liability. File ITR to recover overpaid tax to NRO account.</div><span class="tag t-tax">&#128222; Tax matter</span></div></div>
+      <div class="grp-label">US Filings</div>
+      <div class="task" data-id="ph6-1-0" data-pid="ph6"><div class="task-chk"></div><div class="task-body"><div class="task-text">File FBAR (FinCEN 114) for all years with foreign accounts &gt;$10K</div><div class="task-detail">Includes NRE, NRO, MF folios, demat. Deadline April 15 (auto-extended to Oct 15). Check every prior year &#8212; penalties are $10K+ per violation.</div><span class="tag t-urgent">&#9889; Do this first</span></div></div>
+      <div class="task" data-id="ph6-1-1" data-pid="ph6"><div class="task-chk"></div><div class="task-body"><div class="task-text">File Form 8938 (FATCA) if foreign assets exceed $50K</div><div class="task-detail">Filed with federal return. $50K end-of-year or $75K at any point for single filers. Higher thresholds for MFJ. $10K penalty for failure.</div><span class="tag t-urgent">&#9889; Do this first</span></div></div>
+      <div class="task" data-id="ph6-1-2" data-pid="ph6"><div class="task-chk"></div><div class="task-body"><div class="task-text">Claim Foreign Tax Credit on IRS Form 1116</div><div class="task-detail">Indian taxes paid (TDS on NRO interest, capital gains) reduce US tax dollar for dollar. Your US CPA files this. Prevents true double taxation.</div><span class="tag t-tax">&#128222; Tax matter</span></div></div>
+    </div>
+  </div>
+
+  <!-- PHASE 7 -->
+  <div class="phase-card" id="ph7">
+    <div class="phase-hdr" data-toggleid="ph7">
+      <div class="phase-ico">&#9992;&#65039;</div>
+      <div class="phase-hdr-meta">
+        <div class="phase-num">Phase 7</div>
+        <div class="phase-title">Execute the Transfers</div>
+        <div class="phase-sub">Wire it home &#8212; the mechanics of moving money legally</div>
+      </div>
+      <div class="phase-right"><div class="phase-step-count">5 steps</div><div class="phase-done-count" id="dc-ph7"></div></div>
+      <div class="chevron">&#9662;</div>
+    </div>
+    <div class="phase-body">
+      <div class="ctx-box">&#128161; <strong>This is the payoff phase.</strong> Phases 1&#8211;6 done properly means this is straightforward. Most transfers get blocked because paperwork was not ready &#8212; not because the money is hard to move.</div>
+      <div class="grp-label">Execution Order</div>
+      <div class="task" data-id="ph7-0-0" data-pid="ph7"><div class="task-chk"></div><div class="task-body"><div class="task-text">Build complete document packet before visiting the bank</div><div class="task-detail">Form 15CA + 15CB + source of funds proof (sale deed/MF statement/FD certificate) + PAN + passport + ITR acknowledgment + KYC. Incomplete submissions restart the clock.</div><span class="tag t-once">&#9745;&#65039; One-time</span></div></div>
+      <div class="task" data-id="ph7-0-1" data-pid="ph7"><div class="task-chk"></div><div class="task-body"><div class="task-text">Wire NRE funds first &#8212; no paperwork, no limit, no TDS</div><div class="task-detail">Always drain NRE first. Nothing to prepare, just initiate a SWIFT wire from NRE account to US bank.</div><span class="tag t-bank">&#127974; Bank action</span></div></div>
+      <div class="task" data-id="ph7-0-2" data-pid="ph7"><div class="task-chk"></div><div class="task-body"><div class="task-text">Spread NRO transfers across financial years if above $1M</div><div class="task-detail">$1M per person per April&#8211;March year. Spread large amounts across years or use both spouses&#8217; $1M limits simultaneously.</div><span class="tag t-legal">&#9878;&#65039; Legal / FEMA</span></div></div>
+      <div class="task" data-id="ph7-0-3" data-pid="ph7"><div class="task-chk"></div><div class="task-body"><div class="task-text">Only use SWIFT wire transfers &#8212; zero exceptions</div><div class="task-detail">Hawala or informal channels are FEMA criminal violations. Use only official SWIFT from your Indian bank. Document every transfer with a SWIFT confirmation.</div><span class="tag t-urgent">&#9889; Do this first</span></div></div>
+      <div class="grp-label">After Transfer</div>
+      <div class="task" data-id="ph7-1-0" data-pid="ph7"><div class="task-chk"></div><div class="task-body"><div class="task-text">Keep all records for 7 years + brief your US CPA on each transfer</div><div class="task-detail">SWIFT confirmations, 15CA/15CB copies, A2 forms, TDS certificates. Tell your CPA the source of each transfer &#8212; investment proceeds, rental, sale &#8212; they have different US tax treatment.</div><span class="tag t-legal">&#9878;&#65039; Legal / FEMA</span></div></div>
+    </div>
+  </div>
+
+  <div class="confirm-bar" id="confirm-bar">
+    <span>Reset all checklist items?</span>
+    <button class="c-no" id="btn-cancel">Cancel</button>
+    <button class="c-yes" id="btn-confirm">Reset</button>
+  </div>
+  <button class="btn-retake" id="btn-reset">&#8617; Reset Checklist</button>
+  <div class="step-nav-btns" style="margin-top:12px;">
+    <button class="btn-secondary" id="btn-4-back">&#8592; Back to Plan</button>
+  </div>
+</div><!-- end panel-4 -->
+
+</main>
+
+<div class="site-footer">
+  Built for the <a href="https://www.reddit.com/r/RupeeStories/" target="_blank">r/RupeeStories</a> community &nbsp;&middot;&nbsp; <a href="https://rupeestories.substack.com" target="_blank">rupeestories.substack.com</a><br>
+  <span style="margin-top:4px;display:block;">Not SEBI-registered advice. Consult a qualified CA before executing large transfers.</span>
+</div>
+
+<script>
+(function(){
+
+var USD_RATE = 84;
+var mfEquityPct = 80;
+var reLTCG = true;
+var epfFiveYears = true;
+var riskFlags = {};
+var checklistState = {};
+
+// ── HELPERS ──────────────────────────────────────────
+function parseAmt(id){
+  var v = (document.getElementById(id)||{}).value || '';
+  return parseFloat(v.replace(/[^0-9.]/g,'')) || 0;
+}
+function fmtL(v){
+  v = Math.round(v);
+  if(v===0) return '&#8377;0';
+  if(v>=10000000) return '&#8377;' + (v/10000000).toFixed(1) + ' Cr';
+  if(v>=100000)   return '&#8377;' + (v/100000).toFixed(1) + ' L';
+  return '&#8377;' + v.toLocaleString('en-IN');
+}
+function fmtU(inr){
+  return '$' + Math.round(inr/USD_RATE).toLocaleString('en-US');
+}
+
+// ── STEP NAVIGATION ───────────────────────────────────
+var currentStep = 1;
+function goStep(n){
+  for(var i=1;i<=4;i++){
+    var p = document.getElementById('panel-'+i);
+    var s = document.getElementById('sni-'+i);
+    if(p) p.className = 'step-panel' + (i===n?' active':'');
+    if(s){
+      s.className = 'step-item' + (i===n?' active':(i<n?' done':''));
+      if(i===n){ s.querySelector('.step-circle').textContent = i; }
+      else if(i<n){ s.querySelector('.step-circle').innerHTML = '&#10003;'; }
+      else { s.querySelector('.step-circle').textContent = i; }
+    }
+    var sl = document.getElementById('sl-'+i);
+    if(sl) sl.className = 'step-line' + (i<n?' done':'');
+  }
+  currentStep = n;
+  window.scrollTo(0,0);
+}
+
+document.getElementById('step-nav').addEventListener('click',function(e){
+  var el = e.target;
+  while(el && el !== this){
+    var go = el.getAttribute('data-go');
+    if(go){
+      var t = parseInt(go);
+      if(t < currentStep){ goStep(t); }
+      return;
+    }
+    el = el.parentElement;
+  }
+});
+
+document.getElementById('btn-1-next').addEventListener('click',function(){
+  computeSummaryTable();
+  goStep(2);
+  syncAutoFlags();
+});
+document.getElementById('btn-2-back').addEventListener('click',function(){ goStep(1); });
+document.getElementById('btn-2-next').addEventListener('click',function(){ computePlan(); goStep(3); });
+document.getElementById('btn-3-back').addEventListener('click',function(){ goStep(2); });
+document.getElementById('btn-3-next').addEventListener('click',function(){ goStep(4); });
+document.getElementById('btn-4-back').addEventListener('click',function(){ goStep(3); });
+
+// ── FX RATE ───────────────────────────────────────────
+document.getElementById('inp-fxrate').addEventListener('input',function(){
+  USD_RATE = parseFloat(this.value) || 84;
+  computePlan();
+});
+
+// ── TOGGLE BUTTONS ────────────────────────────────────
+function setupToggles(groupIds, cb){
+  groupIds.forEach(function(id){
+    var el = document.getElementById(id);
+    if(!el) return;
+    el.addEventListener('click',function(){
+      groupIds.forEach(function(oid){ document.getElementById(oid).className = 'tog-btn'; });
+      el.className = 'tog-btn active';
+      cb(el);
+    });
+  });
+}
+setupToggles(['mf-eq-high','mf-eq-mix','mf-eq-debt'],function(el){ mfEquityPct = parseInt(el.getAttribute('data-mfpct')); computeSummaryTable(); });
+setupToggles(['re-ltcg','re-stcg'],function(el){ reLTCG = (el.getAttribute('data-re')==='ltcg'); computeSummaryTable(); });
+setupToggles(['epf-5y','epf-less'],function(el){ epfFiveYears = (el.getAttribute('data-epf')==='yes'); computeSummaryTable(); });
+
+// ── LIVE INPUT LISTENERS ──────────────────────────────
+var inputIds = ['inp-nre','inp-nro','inp-resident','inp-fd','inp-mf','inp-stocks','inp-re','inp-epf','inp-ppf','inp-lic','inp-rental'];
+inputIds.forEach(function(id){
+  var el = document.getElementById(id);
+  if(!el) return;
+  el.addEventListener('input', computeSummaryTable);
+});
+
+// ── STEP 1: SUMMARY TABLE ─────────────────────────────
+function computeSummaryTable(){
+  var nre     = parseAmt('inp-nre');
+  var nro     = parseAmt('inp-nro');
+  var res     = parseAmt('inp-resident');
+  var fd      = parseAmt('inp-fd');
+  var mf      = parseAmt('inp-mf');
+  var stocks  = parseAmt('inp-stocks');
+  var re      = parseAmt('inp-re');
+  var epf     = parseAmt('inp-epf');
+  var ppf     = parseAmt('inp-ppf');
+  var lic     = parseAmt('inp-lic');
+  var rental  = parseAmt('inp-rental');
+
+  var total = nre+nro+res+fd+mf+stocks+re+epf+ppf+lic;
+  var sc = document.getElementById('summary-card');
+  if(total === 0 && rental === 0){ sc.style.display='none'; return; }
+  sc.style.display = 'block';
+
+  // Tax estimates (rough planning figures)
+  var eqFrac = mfEquityPct/100;
+  var mfTax  = mf*(eqFrac*0.40*0.125) + mf*((1-eqFrac)*0.20*0.30);
+  var stTax  = stocks*0.40*0.125;
+  var reTax  = re*(reLTCG?0.23:0.35);
+  var epfTax = epfFiveYears ? 0 : epf*0.10;
+  var fdTax  = fd*0.07*0.30; // interest only
+  var rentalTax = rental*12*0.21;
+
+  var rows = [
+    { name:'NRE Account',           val:nre,    tax:0,       path:'<span class="badge b-green">&#9989; Move now</span>' },
+    { name:'NRO Account',           val:nro,    tax:0,       path:'<span class="badge b-blue">&#128203; 15CA/15CB</span>' },
+    { name:'Resident Savings &#10071;', val:res,tax:0,       path:'<span class="badge b-red">&#10071; Convert first</span>' },
+    { name:'Fixed Deposits',        val:fd,     tax:fdTax,   path:'<span class="badge b-blue">&#128203; NRO path</span>' },
+    { name:'Mutual Funds',          val:mf,     tax:mfTax,   path:'<span class="badge b-amber">&#128200; Sell &#8594; NRO</span>' },
+    { name:'Stocks / Demat',        val:stocks, tax:stTax,   path:'<span class="badge b-amber">&#128200; Sell &#8594; NRO</span>' },
+    { name:'Real Estate',           val:re,     tax:reTax,   path:'<span class="badge b-purple">&#127968; Complex</span>' },
+    { name:'EPF',                   val:epf,    tax:epfTax,  path:'<span class="badge b-amber">&#128200; Withdraw &#8594; NRO</span>' },
+    { name:'PPF',                   val:ppf,    tax:0,       path:'<span class="badge b-amber">&#128200; Maturity &#8594; NRO</span>' },
+    { name:'LIC / Insurance',       val:lic,    tax:0,       path:'<span class="badge b-amber">&#128200; Surrender &#8594; NRO</span>' },
+    { name:'Rental (annual)',       val:rental*12, tax:rentalTax, path:'<span class="badge b-blue">&#128203; NRO stream</span>' },
+  ];
+
+  var totalVal=0, totalTax=0;
+  var html = '';
+  rows.forEach(function(r){
+    if(r.val===0) return;
+    totalVal += r.val;
+    totalTax += r.tax;
+    var net = r.val - r.tax;
+    html += '<tr><td>'+r.name+'</td>'
+      +'<td class="amt">'+fmtL(r.val)+'</td>'
+      +'<td class="amt" style="color:var(--red);">'+(r.tax>0?fmtL(r.tax):'-')+'</td>'
+      +'<td class="amt" style="color:var(--green);">'+fmtL(net)+'</td>'
+      +'<td class="path-badge">'+r.path+'</td></tr>';
+  });
+
+  if(totalVal > 0){
+    html += '<tr style="background:#faf8f3;">'
+      +'<td><strong>Total</strong></td>'
+      +'<td class="amt"><strong>'+fmtL(totalVal)+'</strong></td>'
+      +'<td class="amt" style="color:var(--red);"><strong>'+fmtL(totalTax)+'</strong></td>'
+      +'<td class="amt" style="color:var(--green);"><strong>'+fmtL(totalVal-totalTax)+'</strong></td>'
+      +'<td></td></tr>';
+  }
+  document.getElementById('summary-tbody').innerHTML = html;
+}
+
+// ── STEP 2: AUTO-FLAG ─────────────────────────────────
+function syncAutoFlags(){
+  var res = parseAmt('inp-resident');
+  var rf = document.getElementById('rf-resident');
+  if(rf) rf.style.display = res>0 ? 'flex' : 'none';
+  updateRiskMeter();
+}
+
+document.querySelectorAll('.risk-item[data-flag]').forEach(function(el){
+  el.addEventListener('click',function(){
+    var flag = el.getAttribute('data-flag');
+    riskFlags[flag] = !riskFlags[flag];
+    el.classList.toggle('flagged', riskFlags[flag]);
+    var cb = document.getElementById('rcb-'+flag);
+    if(cb) cb.textContent = riskFlags[flag] ? '\u2713' : '';
+    updateRiskMeter();
+  });
+});
+
+function countFlags(){
+  var n = 0;
+  var res = parseAmt('inp-resident');
+  if(res>0) n++;
+  Object.keys(riskFlags).forEach(function(k){ if(riskFlags[k]) n++; });
+  return n;
+}
+function updateRiskMeter(){
+  var n = countFlags();
+  var card = document.getElementById('risk-meter-card');
+  var num  = document.getElementById('risk-num');
+  var lbl  = document.getElementById('risk-lbl');
+  var sub  = document.getElementById('risk-sub');
+  num.textContent = n;
+  if(n===0){ card.className='risk-meter low'; lbl.textContent='No flags &#8212; looking clean'; sub.textContent='Confirm each item honestly'; }
+  else if(n<=2){ card.className='risk-meter mid'; lbl.textContent=n+' flag'+(n>1?'s':'')+' &#8212; manageable'; sub.textContent='Address these before initiating transfers'; }
+  else{ card.className='risk-meter high'; lbl.textContent=n+' flags &#8212; address before transferring'; sub.textContent='Multiple issues compound each other &#8212; fix highest-priority items first'; }
+}
+
+// ── STEP 3: PLAN COMPUTATION ─────────────────────────
+function computePlan(){
+  var nre    = parseAmt('inp-nre');
+  var nro    = parseAmt('inp-nro');
+  var res    = parseAmt('inp-resident');
+  var fd     = parseAmt('inp-fd');
+  var mf     = parseAmt('inp-mf');
+  var stocks = parseAmt('inp-stocks');
+  var re     = parseAmt('inp-re');
+  var epf    = parseAmt('inp-epf');
+  var ppf    = parseAmt('inp-ppf');
+  var lic    = parseAmt('inp-lic');
+  var rental = parseAmt('inp-rental');
+
+  var eqFrac = mfEquityPct/100;
+  var mfTax  = mf*(eqFrac*0.40*0.125)+mf*((1-eqFrac)*0.20*0.30);
+  var stTax  = stocks*0.40*0.125;
+  var reTax  = re*(reLTCG?0.23:0.35);
+  var epfTax = epfFiveYears?0:epf*0.10;
+  var fdTax  = fd*0.07*0.30;
+  var rentalTaxAnn = rental*12*0.21;
+
+  var gross  = nre+nro+res+fd+mf+stocks+re+epf+ppf+lic;
+  var taxTot = mfTax+stTax+reTax+epfTax+fdTax;
+  var net    = gross - taxTot;
+
+  // Hero totals
+  document.getElementById('ph-gross').innerHTML = fmtL(gross);
+  document.getElementById('ph-gross-usd').textContent = fmtU(gross);
+  document.getElementById('ph-net').innerHTML = fmtL(net);
+  document.getElementById('ph-net-usd').textContent = fmtU(net);
+  document.getElementById('ph-imm').innerHTML = fmtL(nre);
+  document.getElementById('ph-imm-usd').textContent = nre>0 ? fmtU(nre) : 'Nothing in NRE yet';
+  document.getElementById('ph-tax').innerHTML = fmtL(taxTot);
+
+  // Risk flags
+  var activeFlags = [];
+  if(parseAmt('inp-resident')>0) activeFlags.push('&#10071; Resident savings account still active &#8212; convert to NRO before any transfer');
+  var flagLabels = {
+    banks:'Banks not notified of NRI status &#8212; required before any repatriation',
+    '15cacb':'Planning to remit without 15CA/15CB &#8212; transfer will be blocked',
+    costbasis:'No cost basis for MF/stocks &#8212; cannot compute correct capital gains',
+    itr:'ITR not filed for India income years &#8212; bank will ask for acknowledgment',
+    unpaidtax:'Unpaid Indian taxes &#8212; will block remittance, penalties accruing',
+    fbar:'FBAR not filed &#8212; $10K penalty per violation',
+    fatca:'FATCA Form 8938 not filed &#8212; $10K penalty',
+    nominee:'No nominee on accounts &#8212; creates estate complications',
+    spouse:'Spouse cannot access accounts/India property independently'
+  };
+  Object.keys(riskFlags).forEach(function(k){ if(riskFlags[k] && flagLabels[k]) activeFlags.push(flagLabels[k]); });
+
+  var planWarn = document.getElementById('plan-risk-flags');
+  var planList = document.getElementById('plan-risk-list');
+  if(activeFlags.length > 0){
+    planWarn.style.display = 'block';
+    planList.innerHTML = activeFlags.map(function(f){ return '<div class="warn-row"><span class="warn-icon">&#10071;</span><span style="font-size:13px;color:#555;">'+f+'</span></div>'; }).join('');
+  } else {
+    planWarn.style.display = 'none';
+  }
+
+  // Path cards
+  var cards = [];
+
+  if(nre > 0) cards.push({
+    ico:'&#9989;',title:'Move Immediately &#8212; NRE Account',sub:'No limit &#183; No tax &#183; No Form 15CA/15CB required',
+    amounts:[{lbl:'Amount',val:fmtL(nre),cls:'green'},{lbl:'Est. tax',val:'None',cls:''},{lbl:'USD equivalent',val:fmtU(nre),cls:'gold'}],
+    steps:['Wire directly from NRE to your US bank via SWIFT','No paperwork required &#8212; just initiate the transfer','Takes 1&#8211;3 business days']
+  });
+
+  var nroTotal = nro + fd;
+  if(nroTotal > 0) cards.push({
+    ico:'&#128203;',title:'NRO Path &#8212; Bank Accounts + FDs',sub:'Up to $1M/year &#183; Form 15CA/15CB required',
+    amounts:[{lbl:'Amount',val:fmtL(nroTotal),cls:''},{lbl:'Est. FD interest tax',val:fdTax>0?fmtL(fdTax):'-',cls:'red'},{lbl:'USD estimate',val:fmtU(nroTotal-fdTax),cls:'gold'}],
+    steps:['Compute all India income and pay pending taxes','Get Form 15CB from your CA (CA-issued, cannot self-file)','File Form 15CA on incometax.gov.in','Submit A2 form + 15CA/15CB to your bank','Bank processes SWIFT wire (allow 2&#8211;5 business days)']
+  });
+
+  if(res > 0) cards.push({
+    ico:'&#10071;',title:'Resident Savings Account &#8212; Fix First',sub:'FEMA violation &#8212; convert to NRO before any transfer',
+    amounts:[{lbl:'Balance',val:fmtL(res),cls:'red'},{lbl:'Action needed',val:'Convert',cls:''},{lbl:'After conversion',val:'NRO path',cls:''}],
+    steps:['Visit bank and submit written notice of NRI status','Bank converts account to NRO','Then follow standard NRO repatriation process']
+  });
+
+  var investTotal = mf + stocks;
+  if(investTotal > 0) cards.push({
+    ico:'&#128200;',title:'Sell &amp; Remit &#8212; Mutual Funds + Stocks',sub:'Sell &#8594; TDS deducted at source &#8594; NRO &#8594; 15CA/15CB &#8594; US',
+    amounts:[{lbl:'Gross value',val:fmtL(investTotal),cls:''},{lbl:'Est. tax (rough)',val:fmtL(mfTax+stTax),cls:'red'},{lbl:'Est. net',val:fmtL(investTotal-mfTax-stTax),cls:'green'}],
+    steps:['Get purchase history / cost basis from CAMS, KFintech, broker','Update KYC to NRI status with each AMC','Sell &#8212; TDS deducted by AMC/broker, net credited to NRO','File ITR &#8212; claim refund if TDS exceeded actual liability','Remit from NRO via standard 15CA/15CB process']
+  });
+
+  if(re > 0) cards.push({
+    ico:'&#127968;',title:'Real Estate &#8212; Complex Path',sub:(reLTCG?'LTCG (held &gt;2yr) &#8212; ~23% effective TDS':'STCG (held &lt;2yr) &#8212; ~35% effective TDS')+' &#183; Buyer deducts from sale price',
+    amounts:[{lbl:'Est. sale value',val:fmtL(re),cls:''},{lbl:'Est. TDS ('+Math.round((reLTCG?0.23:0.35)*100)+'%)',val:fmtL(reTax),cls:'red'},{lbl:'Est. net',val:fmtL(re-reTax),cls:'green'}],
+    steps:['Gather original purchase docs for cost basis calculation','Brief buyer on TDS obligation (they deduct from sale price)','Apply for lower TDS certificate under Section 195(3) if applicable','Receive net proceeds in NRO, obtain Form 16A from buyer','File ITR &#8212; claim refund if TDS &gt; actual capital gains tax','Submit 15CA/15CB with full property docs (allow 2&#8211;4 weeks)']
+  });
+
+  var retTotal = epf + ppf + lic;
+  if(retTotal > 0) cards.push({
+    ico:'&#128737;&#65039;',title:'Retirement &amp; Insurance &#8212; Withdraw First',sub:'Withdraw / surrender &#8594; proceeds hit NRO &#8594; then remit',
+    amounts:[{lbl:'Total balance',val:fmtL(retTotal),cls:''},{lbl:'Est. tax',val:epfTax>0?fmtL(epfTax):epfFiveYears?'Tax-free':'-',cls:epfTax>0?'red':''},{lbl:'Est. net',val:fmtL(retTotal-epfTax),cls:'green'}],
+    steps:['EPF: withdraw via EPFO portal or Form 19 from last employer'+(epfFiveYears?' (tax-free, 5+ years)':' (10% TDS applies)'),'PPF: hold to maturity &#8212; cannot contribute as NRI, corpus is tax-free','LIC: compare surrender value vs waiting to maturity before deciding','All proceeds credited to Indian bank &#8594; move to NRO &#8594; then 15CA/15CB remittance']
+  });
+
+  if(rental > 0) cards.push({
+    ico:'&#127968;',title:'Rental Income &#8212; Ongoing NRO Stream',sub:'Monthly income &#8212; needs annual tax + repatriation plan, not a one-off',
+    amounts:[{lbl:'Monthly income',val:fmtL(rental),cls:''},{lbl:'Annual income',val:fmtL(rental*12),cls:''},{lbl:'Est. annual tax (21%)',val:fmtL(rentalTaxAnn),cls:'red'}],
+    steps:['Rental income must flow to NRO account','File Indian ITR annually for rental income','Pay advance tax if annual rental income &gt; &#8377;2.5L','Remit accumulated NRO balance quarterly or annually via 15CA/15CB','Declare rental income on US Schedule E, claim FTC for Indian tax paid']
+  });
+
+  var pc = document.getElementById('path-cards');
+  pc.innerHTML = cards.map(function(c){
+    var amtsHtml = c.amounts.map(function(a){ return '<div class="pa-item"><div class="pa-lbl">'+a.lbl+'</div><div class="pa-val '+a.cls+'">'+a.val+'</div></div>'; }).join('');
+    var stepsHtml = c.steps.map(function(s,i){ return '<div class="path-step"><div class="ps-num">'+(i+1)+'</div><span>'+s+'</span></div>'; }).join('');
+    return '<div class="path-card"><div class="path-card-hdr"><div class="path-ico">'+c.ico+'</div><div><div class="path-title">'+c.title+'</div><div class="path-sub">'+c.sub+'</div></div></div>'
+      +'<div class="path-amounts">'+amtsHtml+'</div>'
+      +'<div class="path-steps">'+stepsHtml+'</div></div>';
+  }).join('');
+}
+
+// ── STEP 4: CHECKLIST ─────────────────────────────────
+var PHASES = ['ph1','ph2','ph3','ph4','ph5','ph6','ph7'];
+var TOTAL_TASKS = document.querySelectorAll('.task[data-id]').length;
+
+function getTasksFor(pid){ return document.querySelectorAll('.task[data-pid="'+pid+'"]'); }
+
+function updatePhaseCounter(pid){
+  var tasks = getTasksFor(pid);
+  var done = 0;
+  for(var i=0;i<tasks.length;i++){ if(checklistState[tasks[i].getAttribute('data-id')]) done++; }
+  var el = document.getElementById('dc-'+pid);
+  if(el) el.textContent = done>0 ? done+' / '+tasks.length+' done' : '';
+}
+function updateChecklistProgress(){
+  var done = 0;
+  Object.keys(checklistState).forEach(function(k){ if(checklistState[k]) done++; });
+  document.getElementById('cl-score').textContent = done;
+  document.getElementById('cl-fill').style.width = (done/TOTAL_TASKS*100)+'%';
+  var lbl = document.getElementById('cl-lbl');
+  if(done===0) lbl.textContent = 'Start with Phase 1 \u2014 Establish Your Status';
+  else if(done===TOTAL_TASKS) lbl.textContent = '\u2713 All '+TOTAL_TASKS+' steps complete \u2014 well done.';
+  else lbl.textContent = done+' of '+TOTAL_TASKS+' steps done \u00b7 '+Math.round(done/TOTAL_TASKS*100)+'% complete';
+}
+
+document.getElementById('panel-4').addEventListener('click',function(e){
+  var el = e.target;
+  while(el && el !== this){
+    var tid = el.getAttribute('data-toggleid');
+    if(tid){ document.getElementById(tid).classList.toggle('open'); return; }
+    if(el.classList.contains('task')){
+      var id = el.getAttribute('data-id');
+      var pid = el.getAttribute('data-pid');
+      if(!id) break;
+      checklistState[id] = !checklistState[id];
+      var chk = el.querySelector('.task-chk');
+      if(checklistState[id]){ el.classList.add('done'); if(chk) chk.textContent='\u2713'; }
+      else { el.classList.remove('done'); if(chk) chk.textContent=''; }
+      updatePhaseCounter(pid);
+      updateChecklistProgress();
+      return;
+    }
+    el = el.parentElement;
+  }
+});
+
+document.getElementById('btn-reset').addEventListener('click',function(){
+  document.getElementById('confirm-bar').classList.add('show');
+});
+document.getElementById('btn-cancel').addEventListener('click',function(){
+  document.getElementById('confirm-bar').classList.remove('show');
+});
+document.getElementById('btn-confirm').addEventListener('click',function(){
+  Object.keys(checklistState).forEach(function(k){ delete checklistState[k]; });
+  document.querySelectorAll('.task').forEach(function(t){ t.classList.remove('done'); var c=t.querySelector('.task-chk'); if(c) c.textContent=''; });
+  PHASES.forEach(function(p){ updatePhaseCounter(p); });
+  updateChecklistProgress();
+  document.getElementById('confirm-bar').classList.remove('show');
+});
+
+// Init
+PHASES.forEach(function(p){ updatePhaseCounter(p); });
+updateChecklistProgress();
+
+})();
+</script>
+</body>
+</html>
