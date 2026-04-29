@@ -329,7 +329,7 @@ body.simple-mode .simple-only{display:block;}
 <div class="step-panel active" id="panel-1">
 
   <div class="disclaimer">
-    <strong>Planning guide only &#8212; not legal or tax advice.</strong> Tax exposure figures are rough planning ranges. Work with a Chartered Accountant who handles NRI tax and remittance cases before executing any transfers.
+    <strong>Planning guide only &#8212; not legal or tax advice.</strong> Tax and TDS figures are rough planning ranges. Work with a Chartered Accountant who handles NRI tax and remittance cases before executing any transfers.
   </div>
 
   <!-- 1-5% HIGHLIGHT — pulled out of disclaimer so it gets attention -->
@@ -417,7 +417,7 @@ body.simple-mode .simple-only{display:block;}
     <div class="card-sub">Total current value of all MF, stocks, FDs, EPF, PPF, and insurance combined. Use Full detail before you actually start moving money.</div>
     <div class="asset-group-label">Total investments (approximate current value)</div>
     <div class="asset-row">
-      <div class="asset-info"><div class="asset-name">All investments combined</div><div class="asset-note">MF + stocks + FDs + EPF + PPF + LIC. Tax exposure will show as a rough range.</div></div>
+      <div class="asset-info"><div class="asset-name">All investments combined</div><div class="asset-note">MF + stocks + FDs + EPF + PPF + LIC. Tax/TDS estimate will show as a rough range.</div></div>
       <div class="inp-wrap"><span class="inp-prefix">&#8377;</span><input type="text" class="amt-inp" id="inp-invest-simple" placeholder="0" inputmode="numeric"></div>
     </div>
   </div>
@@ -447,12 +447,29 @@ body.simple-mode .simple-only{display:block;}
       <div class="inp-wrap"><span class="inp-prefix">&#8377;</span><input type="text" class="amt-inp" id="inp-mf" placeholder="0" inputmode="numeric"></div>
     </div>
 
+    <div class="asset-row">
+      <div class="asset-info"><div class="asset-name">MF Cost Basis (optional)</div><div class="asset-note">Enter total purchase cost if you know it. The planner then estimates tax on gains instead of portfolio value.</div></div>
+      <div class="inp-wrap"><span class="inp-prefix">&#8377;</span><input type="text" class="amt-inp" id="inp-mf-cost" placeholder="0" inputmode="numeric"></div>
+    </div>
+
     <div class="asset-group-label">Stocks / Demat</div>
     <div class="asset-row">
-      <div class="asset-info"><div class="asset-name">Stock Portfolio (current value)</div><div class="asset-note">Sell through broker, proceeds to NRO. LTCG 12.5% (held &gt;1yr, gains above &#8377;1.25L), STCG 15%.</div></div>
+      <div class="asset-info"><div class="asset-name">Stock Portfolio (current value)</div><div class="asset-note">Sell through broker, proceeds to NRO. LTCG 12.5% (held &gt;1yr, gains above &#8377;1.25L), STCG 20% under current post-July 2024 rules.</div>
+        <div class="toggle-group">
+          <button class="tog-btn active" id="stock-ltcg" data-stock="ltcg">Mostly long-term (&gt;1yr)</button>
+          <button class="tog-btn" id="stock-stcg" data-stock="stcg">Mostly short-term (&lt;1yr)</button>
+        </div></div>
       <div class="inp-wrap"><span class="inp-prefix">&#8377;</span><input type="text" class="amt-inp" id="inp-stocks" placeholder="0" inputmode="numeric"></div>
     </div>
+    <div class="asset-row">
+      <div class="asset-info"><div class="asset-name">Stock Cost Basis (optional)</div><div class="asset-note">Enter purchase cost if available. Without it, the tool assumes 40% of portfolio value is gain.</div></div>
+      <div class="inp-wrap"><span class="inp-prefix">&#8377;</span><input type="text" class="amt-inp" id="inp-stocks-cost" placeholder="0" inputmode="numeric"></div>
+    </div>
     <div class="hint">&#128161; <strong>Cost basis matters.</strong> Without original purchase price records you cannot compute actual capital gains. Get purchase history from CAMS, KFintech, or your broker before selling anything.</div>
+    <div class="res-chk-row" id="costbasis-chk-row" style="border-color:#c9e4d0;background:#f2fbf6;margin-top:10px;">
+      <div class="res-chk-box" id="costbasis-chk-box" style="border-color:#9ed0b1;"></div>
+      <div class="asset-info"><div class="asset-name">I have MF / stock cost basis records</div><div class="asset-note">Check this only if you can pull CAMS/KFintech/broker purchase history before selling.</div></div>
+    </div>
   </div>
 
   <!-- ─ PROPERTY ─ -->
@@ -462,7 +479,7 @@ body.simple-mode .simple-only{display:block;}
     <div class="asset-row">
       <div class="asset-info">
         <div class="asset-name">Property / Land (estimated sale value)</div>
-        <div class="asset-note">Buyer must deduct TDS at source &#8212; commonly ~20%+ depending on case, not on profit. The refund on excess tax is claimed later via ITR.</div>
+        <div class="asset-note">Buyer deducts TDS on sale value. For post-July 23, 2024 LTCG, plan around roughly 13% to 14.95% after cess/surcharge. STCG can be much higher because slab rate plus surcharge may apply. Refund on excess TDS is claimed later via ITR.</div>
         <div class="toggle-group">
           <button class="tog-btn active" id="re-ltcg" data-re="ltcg">LTCG (held &gt;2 years)</button>
           <button class="tog-btn" id="re-stcg" data-re="stcg">STCG (held &lt;2 years)</button>
@@ -470,7 +487,11 @@ body.simple-mode .simple-only{display:block;}
       </div>
       <div class="inp-wrap"><span class="inp-prefix">&#8377;</span><input type="text" class="amt-inp" id="inp-re" placeholder="0" inputmode="numeric"></div>
     </div>
-    <div class="hint">&#128161; <strong>Repatriation of residential property proceeds has category-specific limits and conditions.</strong> Get CA and bank confirmation before assuming full repatriability for your specific situation.</div>
+    <div class="asset-row">
+      <div class="asset-info"><div class="asset-name">Property Purchase Cost (optional)</div><div class="asset-note">Use purchase cost or CA-confirmed tax cost. For post-July 23, 2024 NRI LTCG, indexation choice generally does not apply the same way it does for residents. This separates actual tax from buyer TDS holdback.</div></div>
+      <div class="inp-wrap"><span class="inp-prefix">&#8377;</span><input type="text" class="amt-inp" id="inp-re-cost" placeholder="0" inputmode="numeric"></div>
+    </div>
+    <div class="hint">&#128161; <strong>Repatriation of residential property proceeds has category-specific limits and conditions.</strong> Get CA and bank confirmation before assuming full repatriability for your specific situation. Agricultural land, plantation property, farmhouse, inheritance, and gifted property can have different restrictions.</div>
   </div>
 
   <!-- ─ RETIREMENT & INSURANCE (detail mode) ─ -->
@@ -501,6 +522,17 @@ body.simple-mode .simple-only{display:block;}
     <div class="asset-row">
       <div class="asset-info"><div class="asset-name">Insurance Surrender Value</div><div class="asset-note">Generally tax-free under Section 10(10D) if premium &lt;10% of sum assured. Compare surrender vs maturity before deciding.</div></div>
       <div class="inp-wrap"><span class="inp-prefix">&#8377;</span><input type="text" class="amt-inp" id="inp-lic" placeholder="0" inputmode="numeric"></div>
+    </div>
+  </div>
+
+  <!-- ─ NPS ─ -->
+  <div class="card detail-only">
+    <div class="card-title">NPS</div>
+    <div class="card-sub">Often missed in India exit planning. NPS has withdrawal, annuity, and taxation rules that are different from MF or EPF.</div>
+    <div class="asset-group-label">National Pension System</div>
+    <div class="asset-row">
+      <div class="asset-info"><div class="asset-name">NPS Balance</div><div class="asset-note">Do not treat this as freely liquid. Check exit rules, annuity purchase rules, and tax treatment before assuming availability.</div></div>
+      <div class="inp-wrap"><span class="inp-prefix">&#8377;</span><input type="text" class="amt-inp" id="inp-nps" placeholder="0" inputmode="numeric"></div>
     </div>
   </div>
 
@@ -589,11 +621,11 @@ body.simple-mode .simple-only{display:block;}
     <div id="bucket-summary-wrap" style="margin-bottom:16px;"></div>
     <div class="tbl-wrap">
       <table id="summary-table">
-        <thead><tr><th>Asset</th><th>Value (&#8377;)</th><th>Tax exposure</th><th>Approx. net</th><th>Path</th></tr></thead>
+        <thead><tr><th>Asset</th><th>Value (&#8377;)</th><th>Tax / TDS note</th><th>Eventual net</th><th>Path</th></tr></thead>
         <tbody id="summary-tbody"></tbody>
       </table>
     </div>
-    <div class="tax-caveat">&#9432; Tax exposure columns show rough planning ranges only. Actual tax depends on individual cost basis, holding period per lot, indexation eligibility, and applicable surcharges. Use these as planning estimates, not filing figures.</div>
+    <div class="tax-caveat">&#9432; Tax / TDS columns show rough planning ranges only. Property shows actual tax on gain versus possible buyer TDS holdback on sale value. Actual tax depends on cost basis, holding period per lot, surcharge, cess, exemptions, and CA calculation. Use these as planning estimates, not filing figures.</div>
   </div>
 
   <!-- INSTANT TOP-LINE SUMMARY -->
@@ -1022,10 +1054,10 @@ body.simple-mode .simple-only{display:block;}
       <div class="task" data-id="ph3-0-0" data-pid="ph3"><div class="task-chk"></div><div class="task-body"><div class="task-text">Get Consolidated Account Statement from CAMS or KFintech</div><div class="task-detail">Request CAS using your PAN and email. Shows every folio across all AMCs in one document. Do this before anything else.</div><span class="tag t-once">&#9745;&#65039; One-time</span></div></div>
       <div class="task" data-id="ph3-0-1" data-pid="ph3"><div class="task-chk"></div><div class="task-body"><div class="task-text">Collect purchase history and cost basis per folio</div><div class="task-detail">Without original purchase price you cannot compute capital gains accurately or claim the correct tax treatment. Get from CAMS, KFintech, or AMC statements before selling.</div><span class="tag t-urgent">&#9889; Do this first</span></div></div>
       <div class="task" data-id="ph3-0-2" data-pid="ph3"><div class="task-chk"></div><div class="task-body"><div class="task-text">Update KYC to NRI status with each AMC before redeeming</div><div class="task-detail">Resident KYC may block redemption at some AMCs. Update to NRI KYC first. Allow a few days per AMC.</div><span class="tag t-once">&#9745;&#65039; One-time</span></div></div>
-      <div class="task" data-id="ph3-0-3" data-pid="ph3"><div class="task-chk"></div><div class="task-body"><div class="task-text">Redeem &#8212; TDS usually deducted by AMC, proceeds credited to NRO</div><div class="task-detail">TDS treatment varies by fund type and holding period. Equity: typically 15% on STCG (&lt;1yr), 12.5% on LTCG (&gt;1yr, gains above &#8377;1.25L). Debt: 30% flat for NRIs. Confirm with AMC before large redemptions. Then use 15CA process to remit from NRO.</div><span class="tag t-tax">&#128222; Tax matter</span></div></div>
+      <div class="task" data-id="ph3-0-3" data-pid="ph3"><div class="task-chk"></div><div class="task-body"><div class="task-text">Redeem &#8212; TDS usually deducted by AMC, proceeds credited to NRO</div><div class="task-detail">TDS treatment varies by fund type and holding period. Equity: typically 20% on STCG (&lt;1yr), 12.5% on LTCG (&gt;1yr, gains above &#8377;1.25L). Debt: taxed at slab rate. This tool uses a slab-aware estimate from income entered here, but your full India income can change the result. Confirm with AMC/CA before large redemptions. Then use 15CA process to remit from NRO.</div><span class="tag t-tax">&#128222; Tax matter</span></div></div>
       <div class="grp-label">Stocks &amp; Demat</div>
       <div class="task" data-id="ph3-1-0" data-pid="ph3"><div class="task-chk"></div><div class="task-body"><div class="task-text">Update broker/demat account to NRI status before selling</div><div class="task-detail">Some brokers require a fresh NRI-linked demat account. Check with your broker. Also collect broker statements with cost basis per holding.</div><span class="tag t-once">&#9745;&#65039; One-time</span></div></div>
-      <div class="task" data-id="ph3-1-1" data-pid="ph3"><div class="task-chk"></div><div class="task-body"><div class="task-text">Sell stocks &#8212; proceeds to NRO &#8212; then remit via 15CA process</div><div class="task-detail">Equity: 15% STCG (&lt;1yr), 12.5% LTCG (&gt;1yr above &#8377;1.25L). Do not assume TDS certificates from broker will auto-populate your ITR &#8212; verify each one.</div><span class="tag t-tax">&#128222; Tax matter</span></div></div>
+      <div class="task" data-id="ph3-1-1" data-pid="ph3"><div class="task-chk"></div><div class="task-body"><div class="task-text">Sell stocks &#8212; proceeds to NRO &#8212; then remit via 15CA process</div><div class="task-detail">Equity: 20% STCG (&lt;1yr), 12.5% LTCG (&gt;1yr above &#8377;1.25L). Do not assume TDS certificates from broker will auto-populate your ITR &#8212; verify each one.</div><span class="tag t-tax">&#128222; Tax matter</span></div></div>
       <div class="grp-label">Fixed Deposits</div>
       <div class="task" data-id="ph3-2-0" data-pid="ph3"><div class="task-chk"></div><div class="task-body"><div class="task-text">Let FDs mature or calculate premature closure penalty first</div><div class="task-detail">NRO FD interest attracts 30% TDS. On maturity, principal + post-TDS interest credited to NRO. Calculate whether breaking early makes financial sense.</div><span class="tag t-tax">&#128222; Tax matter</span></div></div>
       <div class="grp-label">PPF (Public Provident Fund)</div>
@@ -1047,7 +1079,7 @@ body.simple-mode .simple-only{display:block;}
       <div class="ctx-box">&#128161; <strong>Real estate is the hardest asset to move.</strong> High TDS, multiple approvals, and category-specific repatriation rules. The buyer is legally required to deduct TDS from your sale amount. Start early and use a CA who specialises in NRI property sales.</div>
       <div class="grp-label">Before You Sell</div>
       <div class="task" data-id="ph4-0-0" data-pid="ph4"><div class="task-chk"></div><div class="task-body"><div class="task-text">Gather all original purchase documents for cost basis</div><div class="task-detail">Sale deed, registration, builder agreement, payment receipts, home loan closure certificate. Needed to calculate actual capital gains and apply for lower TDS if eligible.</div><span class="tag t-once">&#9745;&#65039; One-time</span></div></div>
-      <div class="task" data-id="ph4-0-1" data-pid="ph4"><div class="task-chk"></div><div class="task-body"><div class="task-text">Brief the buyer: they must deduct TDS from sale price</div><div class="task-detail">LTCG (&gt;2 years): effective TDS typically ~23% including surcharge. STCG (&lt;2 years): ~35% effective. <strong>TDS is on the sale value, not the profit</strong> &#8212; so a &#8377;1Cr sale can mean &#8377;23L+ deducted upfront even if your actual gains are lower. The excess is refunded later via ITR filing. This is a legal obligation on the buyer, not optional.</div><span class="tag t-urgent">&#9889; Do this first</span></div></div>
+      <div class="task" data-id="ph4-0-1" data-pid="ph4"><div class="task-chk"></div><div class="task-body"><div class="task-text">Brief the buyer: they must deduct TDS from sale price</div><div class="task-detail">LTCG (&gt;2 years, sale after July 23, 2024): plan around roughly 13% to 14.95% TDS after cess/surcharge. STCG (&lt;2 years): slab-rate tax plus surcharge/cess can push TDS much higher, especially on high-value sales. <strong>TDS is on the sale value, not the profit</strong> &#8212; so a &#8377;1Cr LTCG sale can mean roughly &#8377;13L to &#8377;15L deducted upfront even if actual gains tax is lower. The excess is refunded later via ITR filing. This is a legal obligation on the buyer, not optional.</div><span class="tag t-urgent">&#9889; Do this first</span></div></div>
       <div class="task" data-id="ph4-0-2" data-pid="ph4"><div class="task-chk"></div><div class="task-body"><div class="task-text">Apply for lower TDS certificate under Section 195(3) if eligible</div><div class="task-detail">If actual capital gains tax is lower than the applicable TDS rate, your CA can apply to the Income Tax Department. File early &#8212; typically takes 30&#8211;60 days.</div><span class="tag t-tax">&#128222; Tax matter</span></div></div>
       <div class="grp-label">After Sale</div>
       <div class="task" data-id="ph4-1-0" data-pid="ph4"><div class="task-chk"></div><div class="task-body"><div class="task-text">Collect Form 16A (TDS certificate) from the buyer</div><div class="task-detail">Confirms TDS deducted and deposited with government. Use to claim credit in Indian ITR and recover excess TDS.</div><span class="tag t-tax">&#128222; Tax matter</span></div></div>
@@ -1073,7 +1105,7 @@ body.simple-mode .simple-only{display:block;}
       <div class="task" data-id="ph5-0-1" data-pid="ph5"><div class="task-chk"></div><div class="task-body"><div class="task-text">Confirm tax position with CA before EPF withdrawal</div><div class="task-detail">5+ years service usually means cleaner tax treatment, but actual tax and TDS on EPF withdrawal can vary &#8212; especially for non-residents. PAN status and applicable treaty angles also matter. Check before withdrawing.</div><span class="tag t-tax">&#128222; Tax matter</span></div></div>
       <div class="task" data-id="ph5-0-2" data-pid="ph5"><div class="task-chk"></div><div class="task-body"><div class="task-text">Claim pending gratuity from last Indian employer</div><div class="task-detail">5+ years service = entitled to gratuity. Gratuity up to &#8377;20L is tax-free. Contact HR of last employer if not already paid.</div><span class="tag t-once">&#9745;&#65039; One-time</span></div></div>
       <div class="grp-label">NPS</div>
-      <div class="task" data-id="ph5-1-0" data-pid="ph5"><div class="task-chk"></div><div class="task-body"><div class="task-text">Decide: premature NPS exit vs hold to 60</div><div class="task-detail">Premature exit: 80% must buy annuity in India (only 20% lump sum accessible). At 60: 60% lump sum (tax-free), 40% mandatory annuity. Model both with your CA before deciding.</div><span class="tag t-legal">&#9878;&#65039; Legal / FEMA</span></div></div>
+      <div class="task" data-id="ph5-1-0" data-pid="ph5"><div class="task-chk"></div><div class="task-body"><div class="task-text">Decide: premature NPS exit vs hold to 60</div><div class="task-detail">Premature exit: usually only 20% lump sum and 80% annuity. Normal exit rules can change, so do not treat the full balance as liquid. Split lump sum versus annuity with your CA before deciding.</div><span class="tag t-legal">&#9878;&#65039; Legal / FEMA</span></div></div>
       <div class="grp-label">LIC &amp; Insurance</div>
       <div class="task" data-id="ph5-2-0" data-pid="ph5"><div class="task-chk"></div><div class="task-body"><div class="task-text">Inventory all LIC, ULIP, and endowment policies</div><div class="task-detail">Check surrender value vs maturity value and remaining premiums. For policies in the final 2&#8211;3 years, waiting to maturity often beats surrendering at a penalty.</div><span class="tag t-once">&#9745;&#65039; One-time</span></div></div>
       <div class="task" data-id="ph5-2-1" data-pid="ph5"><div class="task-chk"></div><div class="task-body"><div class="task-text">Surrender LIC &#8212; proceeds to NRO &#8212; then remit via 15CA process</div><div class="task-detail">Generally tax-free under Section 10(10D) if premium &lt;10% of sum assured. Stop paying premiums on policies you plan to exit. Consider the paid-up option if not surrendering.</div><span class="tag t-bank">&#127974; Bank action</span></div></div>
@@ -1095,8 +1127,8 @@ body.simple-mode .simple-only{display:block;}
       <div class="task" data-id="ph6-0-1" data-pid="ph6"><div class="task-chk"></div><div class="task-body"><div class="task-text">Claim DTAA relief &#8212; attach Form 67 with Indian ITR</div><div class="task-detail">The India&#8211;US DTAA helps avoid double taxation through credits &#8212; not by eliminating tax on both sides. You often pay tax in both countries, then claim credit to offset. File Form 67 with Indian ITR. Your India CA and US CPA need to coordinate.</div><span class="tag t-tax">&#128222; Tax matter</span></div></div>
       <div class="task" data-id="ph6-0-2" data-pid="ph6"><div class="task-chk"></div><div class="task-body"><div class="task-text">Claim excess TDS refunds via ITR</div><div class="task-detail">TDS deducted at 30% may exceed actual tax liability, especially for smaller gains or exempt income. File ITR to recover the difference to your NRO account.</div><span class="tag t-tax">&#128222; Tax matter</span></div></div>
       <div class="grp-label">US Filings</div>
-      <div class="task" data-id="ph6-1-0" data-pid="ph6"><div class="task-chk"></div><div class="task-body"><div class="task-text">File FBAR (FinCEN 114) for all years with foreign accounts &gt;$10K</div><div class="task-detail">NRE, NRO, MF folios, demat all count toward the $10K threshold. Deadline April 15 (auto-extended to Oct 15). Check every prior year &#8212; $10K penalty per violation (non-willful).</div><span class="tag t-urgent">&#9889; Do this first</span></div></div>
-      <div class="task" data-id="ph6-1-1" data-pid="ph6"><div class="task-chk"></div><div class="task-body"><div class="task-text">File Form 8938 (FATCA) if foreign assets exceeded $50K</div><div class="task-detail">Filed with federal return. $50K end-of-year or $75K at any point (single filers). $10K penalty for failure. Your US CPA should check prior years as part of onboarding.</div><span class="tag t-urgent">&#9889; Do this first</span></div></div>
+      <div class="task" data-id="ph6-1-0" data-pid="ph6"><div class="task-chk"></div><div class="task-body"><div class="task-text">File FBAR (FinCEN 114) for all years with foreign accounts &gt;$10K</div><div class="task-detail">NRE, NRO, MF folios, demat all count toward the $10K threshold. Deadline April 15 (auto-extended to Oct 15). Check every prior year &#8212; non-willful penalties generally apply per report, not per account. Do not ignore this.</div><span class="tag t-urgent">&#9889; Do this first</span></div></div>
+      <div class="task" data-id="ph6-1-1" data-pid="ph6"><div class="task-chk"></div><div class="task-body"><div class="task-text">File Form 8938 (FATCA) if foreign assets exceeded $50K</div><div class="task-detail">Filed with federal return. $50K end-of-year or $75K at any point (single filers). penalty starts at $10K for failure and can grow if not fixed. Your US CPA should check prior years as part of onboarding.</div><span class="tag t-urgent">&#9889; Do this first</span></div></div>
       <div class="task" data-id="ph6-1-2" data-pid="ph6"><div class="task-chk"></div><div class="task-body"><div class="task-text">Claim Foreign Tax Credit on IRS Form 1116</div><div class="task-detail">Indian taxes paid (TDS on NRO interest, capital gains tax) reduce US tax liability dollar for dollar. Your US CPA files this. Prevents true double taxation under the DTAA.</div><span class="tag t-tax">&#128222; Tax matter</span></div></div>
     </div>
   </div>
@@ -1168,7 +1200,7 @@ body.simple-mode .simple-only{display:block;}
           <div style="background:#f5f3ee;border-radius:6px;padding:7px 9px;"><strong>Has:</strong> &#8377;40L NRE, &#8377;25L NRO FD, &#8377;80L flat (LTCG).</div>
           <div style="background:#e8f5ee;border-radius:6px;padding:7px 9px;">&#9989; <strong>NRE &#8377;40L:</strong> Wire directly. Zero paperwork.</div>
           <div style="background:#fff8e8;border-radius:6px;padding:7px 9px;">&#128200; <strong>NRO FD:</strong> Let mature. 30% TDS already deducted. File ITR to reclaim. Then 15CA to remit.</div>
-          <div style="background:#f5eef8;border-radius:6px;padding:7px 9px;">&#127968; <strong>Flat:</strong> Buyer deducts ~23% TDS on &#8377;80L = ~&#8377;18L upfront. File ITR &mdash; actual LTCG may be lower. Refund to NRO, then remit.</div>
+          <div style="background:#f5eef8;border-radius:6px;padding:7px 9px;">&#127968; <strong>Flat:</strong> Buyer may deduct roughly 13% to 14.95% TDS on &#8377;80L = about &#8377;10L to &#8377;12L upfront for LTCG sales after July 23, 2024. File ITR &mdash; actual LTCG may be lower. Refund to NRO, then remit.</div>
           <div style="background:#fdf0f0;border-radius:6px;padding:7px 9px;">&#10071; <strong>Watch:</strong> PPF contributions stopped? FBAR filed every year?</div>
         </div>
       </div>
@@ -1204,8 +1236,8 @@ body.simple-mode .simple-only{display:block;}
         <div style="font-size:11px;color:var(--muted);margin-bottom:8px;">Above $1M NRO + two properties + NPS</div>
         <div style="display:grid;gap:5px;font-size:12px;color:#444;line-height:1.5;">
           <div style="background:#e8f5ee;border-radius:6px;padding:7px 9px;">&#9660; <strong>$1M limit:</strong> Each can remit $1M/yr = $2M combined. Split &#8377;1.2Cr across both names.</div>
-          <div style="background:#f5eef8;border-radius:6px;padding:7px 9px;">&#127968; <strong>Properties:</strong> FEMA allows 2 per person lifetime. Buyer deducts ~23% TDS. Apply for Section 195(3) cert early.</div>
-          <div style="background:#edf2fb;border-radius:6px;padding:7px 9px;">&#128195; <strong>NPS at 60:</strong> 60% lump sum (tax-free), 40% annuity = ongoing Indian income. Tell US CPA.</div>
+          <div style="background:#f5eef8;border-radius:6px;padding:7px 9px;">&#127968; <strong>Properties:</strong> FEMA allows 2 per person lifetime. Buyer deducts TDS, roughly 13% to 14.95% for post-July 23, 2024 LTCG, higher for STCG. Apply for Section 195(3) cert early.</div>
+          <div style="background:#edf2fb;border-radius:6px;padding:7px 9px;">&#128195; <strong>NPS:</strong> split lump sum versus annuity. Do not treat the full balance as cash. Tell US CPA.</div>
           <div style="background:#fdf0f0;border-radius:6px;padding:7px 9px;">&#10071; <strong>Watch:</strong> FATCA Form 8938 &mdash; at these balances, required every year. Check all prior years.</div>
         </div>
       </div>
@@ -1243,7 +1275,7 @@ body.simple-mode .simple-only{display:block;}
       <div id="gl-items">
         <div class="gl-sh" style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin:8px 0 8px;padding-left:2px;">Bank Accounts</div>
         <div class="gl-item card" data-terms="nre non-resident external" style="margin-bottom:7px;padding:11px 13px;"><div style="font-family:'Playfair Display',serif;font-size:13px;font-weight:700;margin-bottom:3px;">NRE Account <small style="font-weight:400;color:var(--muted);">Non-Resident External</small></div><div style="font-size:12px;color:#444;line-height:1.55;">Holds money from abroad. Interest tax-free in India. Full balance wired to US with no limit, no tax, no paperwork. Wire NRE first, always.</div></div>
-        <div class="gl-item card" data-terms="nro non-resident ordinary" style="margin-bottom:7px;padding:11px 13px;"><div style="font-family:'Playfair Display',serif;font-size:13px;font-weight:700;margin-bottom:3px;">NRO Account <small style="font-weight:400;color:var(--muted);">Non-Resident Ordinary</small></div><div style="font-size:12px;color:#444;line-height:1.55;">India-sourced income. $1M per person per FY repatriation limit. Needs Form 15CA (always) and 15CB (when taxable &gt;&#8377;5L). 30% TDS on interest.</div></div>
+        <div class="gl-item card" data-terms="nro non-resident ordinary" style="margin-bottom:7px;padding:11px 13px;"><div style="font-family:'Playfair Display',serif;font-size:13px;font-weight:700;margin-bottom:3px;">NRO Account <small style="font-weight:400;color:var(--muted);">Non-Resident Ordinary</small></div><div style="font-size:12px;color:#444;line-height:1.55;">India-sourced income. $1M per person per FY repatriation limit. Needs Form 15CA (always) and 15CB (when taxable &gt;&#8377;5L). interest is taxable in India; actual tax depends on your slab and total India income.</div></div>
         <div class="gl-item card" data-terms="resident savings account fema" style="margin-bottom:7px;padding:11px 13px;border-color:#f5c0c0;background:#fff9f9;"><div style="font-family:'Playfair Display',serif;font-size:13px;font-weight:700;margin-bottom:3px;color:var(--red);">Resident Savings Account</div><div style="font-size:12px;color:#444;line-height:1.55;">Must be redesignated to NRO when you become NRI. Operating one as an NRI is a FEMA compliance gap.</div></div>
 
         <div class="gl-sh" style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin:14px 0 8px;padding-left:2px;">Forms &amp; Documents</div>
@@ -1251,7 +1283,7 @@ body.simple-mode .simple-only{display:block;}
         <div class="gl-item card" data-terms="form 15cb ca certificate" style="margin-bottom:7px;padding:11px 13px;"><div style="font-family:'Playfair Display',serif;font-size:13px;font-weight:700;margin-bottom:3px;">Form 15CB</div><div style="font-size:12px;color:#444;line-height:1.55;">CA certificate that taxes are paid. Needed when taxable remittance &gt;&#8377;5L in a FY. CA-issued, cannot be self-filed.</div></div>
         <div class="gl-item card" data-terms="form a2 bank purpose remittance" style="margin-bottom:7px;padding:11px 13px;"><div style="font-family:'Playfair Display',serif;font-size:13px;font-weight:700;margin-bottom:3px;">Form A2</div><div style="font-size:12px;color:#444;line-height:1.55;">Your bank&#8217;s internal purpose-of-remittance form. Submitted with 15CA/15CB. Every bank has their own version.</div></div>
         <div class="gl-item card" data-terms="form 16a tds certificate" style="margin-bottom:7px;padding:11px 13px;"><div style="font-family:'Playfair Display',serif;font-size:13px;font-weight:700;margin-bottom:3px;">Form 16A</div><div style="font-size:12px;color:#444;line-height:1.55;">TDS certificate from bank/AMC/broker/buyer. Use this to claim TDS as credit in your Indian ITR.</div></div>
-        <div class="gl-item card" data-terms="fbar fincen 114 foreign accounts" style="margin-bottom:7px;padding:11px 13px;"><div style="font-family:'Playfair Display',serif;font-size:13px;font-weight:700;margin-bottom:3px;">FBAR &nbsp;<small style="font-weight:400;color:var(--muted);">FinCEN 114</small></div><div style="font-size:12px;color:#444;line-height:1.55;">US filing when foreign accounts exceeded $10,000 at any point in the year. NRE, NRO, MF folios, demat all count. $10,000+ penalty per violation.</div></div>
+        <div class="gl-item card" data-terms="fbar fincen 114 foreign accounts" style="margin-bottom:7px;padding:11px 13px;"><div style="font-family:'Playfair Display',serif;font-size:13px;font-weight:700;margin-bottom:3px;">FBAR &nbsp;<small style="font-weight:400;color:var(--muted);">FinCEN 114</small></div><div style="font-size:12px;color:#444;line-height:1.55;">US filing when foreign accounts exceeded $10,000 at any point in the year. NRE, NRO, MF folios, demat all count. penalties can apply if missed. Handle catch-up with a US tax professional.</div></div>
         <div class="gl-item card" data-terms="form 8938 fatca foreign assets" style="margin-bottom:7px;padding:11px 13px;"><div style="font-family:'Playfair Display',serif;font-size:13px;font-weight:700;margin-bottom:3px;">Form 8938 &nbsp;<small style="font-weight:400;color:var(--muted);">FATCA</small></div><div style="font-size:12px;color:#444;line-height:1.55;">IRS form for foreign assets above $50K year-end or $75K at any point. Filed with federal return. $10,000 penalty.</div></div>
         <div class="gl-item card" data-terms="form 3520 inheritance gift foreign" style="margin-bottom:7px;padding:11px 13px;"><div style="font-family:'Playfair Display',serif;font-size:13px;font-weight:700;margin-bottom:3px;">Form 3520</div><div style="font-size:12px;color:#444;line-height:1.55;">IRS form for gifts/inheritances from foreign persons above $100,000. Penalty: 25% of unreported amount. Commonly missed by NRIs inheriting Indian property.</div></div>
         <div class="gl-item card" data-terms="form 67 foreign tax credit india" style="margin-bottom:7px;padding:11px 13px;"><div style="font-family:'Playfair Display',serif;font-size:13px;font-weight:700;margin-bottom:3px;">Form 67</div><div style="font-size:12px;color:#444;line-height:1.55;">Filed with Indian ITR to claim credit for US taxes paid. Required for DTAA benefits in India. Filed by your India CA.</div></div>
@@ -1260,8 +1292,8 @@ body.simple-mode .simple-only{display:block;}
 
         <div class="gl-sh" style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin:14px 0 8px;padding-left:2px;">Tax &amp; Capital Gains</div>
         <div class="gl-item card" data-terms="tds tax deducted source" style="margin-bottom:7px;padding:11px 13px;"><div style="font-family:'Playfair Display',serif;font-size:13px;font-weight:700;margin-bottom:3px;">TDS &nbsp;<small style="font-weight:400;color:var(--muted);">Tax Deducted at Source</small></div><div style="font-size:12px;color:#444;line-height:1.55;">Tax withheld before income reaches you. 30% on NRO interest. Deducted by AMC on MF redemptions. Buyer deducts from property sale price. Reclaim excess via ITR.</div></div>
-        <div class="gl-item card" data-terms="ltcg long term capital gains" style="margin-bottom:7px;padding:11px 13px;"><div style="font-family:'Playfair Display',serif;font-size:13px;font-weight:700;margin-bottom:3px;">LTCG &nbsp;<small style="font-weight:400;color:var(--muted);">Long-Term Capital Gains</small></div><div style="font-size:12px;color:#444;line-height:1.55;">Equity/MF held &gt;1 year: 12.5% on gains above &#8377;1.25L. Property held &gt;2 years: 20% with indexation (12.5% without).</div></div>
-        <div class="gl-item card" data-terms="stcg short term capital gains" style="margin-bottom:7px;padding:11px 13px;"><div style="font-family:'Playfair Display',serif;font-size:13px;font-weight:700;margin-bottom:3px;">STCG &nbsp;<small style="font-weight:400;color:var(--muted);">Short-Term Capital Gains</small></div><div style="font-size:12px;color:#444;line-height:1.55;">Equity &lt;1 year: 15%. Property &lt;2 years: 30%+ for NRIs. Property STCG TDS can exceed 35% of the full sale amount.</div></div>
+        <div class="gl-item card" data-terms="ltcg long term capital gains" style="margin-bottom:7px;padding:11px 13px;"><div style="font-family:'Playfair Display',serif;font-size:13px;font-weight:700;margin-bottom:3px;">LTCG &nbsp;<small style="font-weight:400;color:var(--muted);">Long-Term Capital Gains</small></div><div style="font-size:12px;color:#444;line-height:1.55;">Equity/MF held &gt;1 year: 12.5% on gains above &#8377;1.25L. Property held &gt;2 years and sold after July 23, 2024: 12.5% base rate without indexation for NRIs in most planning cases; surcharge and cess can apply.</div></div>
+        <div class="gl-item card" data-terms="stcg short term capital gains" style="margin-bottom:7px;padding:11px 13px;"><div style="font-family:'Playfair Display',serif;font-size:13px;font-weight:700;margin-bottom:3px;">STCG &nbsp;<small style="font-weight:400;color:var(--muted);">Short-Term Capital Gains</small></div><div style="font-size:12px;color:#444;line-height:1.55;">Equity &lt;1 year: 20%. Property &lt;2 years: slab-rate tax for NRIs, with higher TDS holdback possible. Property STCG TDS can exceed 35% of the full sale amount.</div></div>
         <div class="gl-item card" data-terms="itr income tax return india filing" style="margin-bottom:7px;padding:11px 13px;"><div style="font-family:'Playfair Display',serif;font-size:13px;font-weight:700;margin-bottom:3px;">ITR &nbsp;<small style="font-weight:400;color:var(--muted);">Income Tax Return</small></div><div style="font-size:12px;color:#444;line-height:1.55;">Annual India tax filing. Required when India income &gt;&#8377;2.5L (excluding NRE interest). Also how you reclaim excess TDS. Banks request it before large remittances.</div></div>
         <div class="gl-item card" data-terms="dtaa double taxation avoidance agreement india us treaty" style="margin-bottom:7px;padding:11px 13px;"><div style="font-family:'Playfair Display',serif;font-size:13px;font-weight:700;margin-bottom:3px;">DTAA &nbsp;<small style="font-weight:400;color:var(--muted);">Double Taxation Avoidance Agreement</small></div><div style="font-size:12px;color:#444;line-height:1.55;">India&ndash;US treaty preventing full double taxation. Doesn&#8217;t eliminate tax &mdash; you pay in both, then offset via credits. India CA + US CPA must coordinate.</div></div>
         <div class="gl-item card" data-terms="foreign tax credit ftc" style="margin-bottom:7px;padding:11px 13px;"><div style="font-family:'Playfair Display',serif;font-size:13px;font-weight:700;margin-bottom:3px;">Foreign Tax Credit (FTC)</div><div style="font-size:12px;color:#444;line-height:1.55;">Reduces US federal tax by Indian taxes paid on the same income. Dollar-for-dollar on Form 1116. Without it, India income gets taxed twice.</div></div>
@@ -1273,7 +1305,7 @@ body.simple-mode .simple-only{display:block;}
         <div class="gl-item card" data-terms="mutual fund mf amc equity debt folio" style="margin-bottom:7px;padding:11px 13px;"><div style="font-family:'Playfair Display',serif;font-size:13px;font-weight:700;margin-bottom:3px;">Mutual Fund (MF)</div><div style="font-size:12px;color:#444;line-height:1.55;">Pooled investment managed by an AMC. Update KYC to NRI before redeeming. AMC deducts TDS before crediting NRO. Get cost basis from CAMS/KFintech first.</div></div>
         <div class="gl-item card" data-terms="epf employee provident fund epfo uan" style="margin-bottom:7px;padding:11px 13px;"><div style="font-family:'Playfair Display',serif;font-size:13px;font-weight:700;margin-bottom:3px;">EPF &nbsp;<small style="font-weight:400;color:var(--muted);">Employee Provident Fund</small></div><div style="font-size:12px;color:#444;line-height:1.55;">Employer retirement savings. Check all past employers via UAN on epfindia.gov.in. 5+ years service usually means cleaner tax &mdash; confirm with CA for NRI position.</div></div>
         <div class="gl-item card" data-terms="ppf public provident fund 15 year tax free" style="margin-bottom:7px;padding:11px 13px;"><div style="font-family:'Playfair Display',serif;font-size:13px;font-weight:700;margin-bottom:3px;">PPF &nbsp;<small style="font-weight:400;color:var(--muted);">Public Provident Fund</small></div><div style="font-size:12px;color:#444;line-height:1.55;">15-year government scheme, tax-free maturity. NRIs cannot make fresh contributions. Existing accounts held to maturity. Stop contributing immediately on becoming NRI.</div></div>
-        <div class="gl-item card" data-terms="nps national pension system annuity" style="margin-bottom:7px;padding:11px 13px;"><div style="font-family:'Playfair Display',serif;font-size:13px;font-weight:700;margin-bottom:3px;">NPS &nbsp;<small style="font-weight:400;color:var(--muted);">National Pension System</small></div><div style="font-size:12px;color:#444;line-height:1.55;">At 60: 60% lump sum (tax-free), 40% annuity (ongoing Indian income). Premature: only 20% lump sum, 80% annuity. Factor annuity into cross-border tax planning.</div></div>
+        <div class="gl-item card" data-terms="nps national pension system annuity" style="margin-bottom:7px;padding:11px 13px;"><div style="font-family:'Playfair Display',serif;font-size:13px;font-weight:700;margin-bottom:3px;">NPS &nbsp;<small style="font-weight:400;color:var(--muted);">National Pension System</small></div><div style="font-size:12px;color:#444;line-height:1.55;">Normal exit and premature exit rules split money between lump sum and annuity. Do not treat full NPS balance as liquid. Factor annuity into cross-border tax planning.</div></div>
         <div class="gl-item card" data-terms="lic ulip endowment surrender maturity" style="margin-bottom:7px;padding:11px 13px;"><div style="font-family:'Playfair Display',serif;font-size:13px;font-weight:700;margin-bottom:3px;">LIC / ULIP / Endowment</div><div style="font-size:12px;color:#444;line-height:1.55;">Insurance policies. Maturity usually tax-free if premium &lt;10% of sum assured. Compare surrender vs maturity &mdash; for policies in last 2&ndash;3 years, waiting often wins.</div></div>
         <div class="gl-item card" data-terms="demat account shares securities nri broker" style="margin-bottom:7px;padding:11px 13px;"><div style="font-family:'Playfair Display',serif;font-size:13px;font-weight:700;margin-bottom:3px;">Demat Account</div><div style="font-size:12px;color:#444;line-height:1.55;">Electronic account holding shares. NRIs need NRI-designated demat linked to NRO/NRE. Some brokers require a fresh NRI demat. Check before selling.</div></div>
 
@@ -1311,12 +1343,12 @@ var riskFlags = {};
 var checklistState = {};
 var currentStep = 1;
 var simpleMode = true;
+var stockLTCG = true;
+var costBasisConfirmed = false;
 
 // ── MODE TOGGLE ──────────────────────────────────────
 document.getElementById('btn-simple-mode').addEventListener('click',function(){
   simpleMode = true;
-  document.body.classList.remove('simple-mode'); // we use opposite: simple = no class, detail = class
-  // Actually let's define: simple-mode class hides .detail-only and shows .simple-only
   document.body.classList.add('simple-mode');
   document.getElementById('btn-simple-mode').classList.add('active');
   document.getElementById('btn-detail-mode').classList.remove('active');
@@ -1402,10 +1434,23 @@ function setupToggles(ids,cb){
 }
 setupToggles(['mf-eq-high','mf-eq-mix','mf-eq-debt'],function(el){mfEquityPct=parseInt(el.getAttribute('data-mfpct'));computeSummaryTable();});
 setupToggles(['re-ltcg','re-stcg'],function(el){reLTCG=(el.getAttribute('data-re')==='ltcg');computeSummaryTable();});
+setupToggles(['stock-ltcg','stock-stcg'],function(el){stockLTCG=(el.getAttribute('data-stock')==='ltcg');computeSummaryTable();});
 setupToggles(['epf-5y','epf-less'],function(el){epfFiveYears=(el.getAttribute('data-epf')==='yes');computeSummaryTable();});
 
+
+var cbCostBasis=document.getElementById('costbasis-chk-row');
+if(cbCostBasis){
+  cbCostBasis.addEventListener('click',function(){
+    costBasisConfirmed=!costBasisConfirmed;
+    this.classList.toggle('checked', costBasisConfirmed);
+    var cb=document.getElementById('costbasis-chk-box');
+    if(cb)cb.textContent=costBasisConfirmed?'✓':'';
+    computeSummaryTable();syncAutoFlags();computeBlockerSummary();autoSave();
+  });
+}
+
 // ── LIVE INPUT ────────────────────────────────────────
-['inp-nre','inp-nro','inp-resident','inp-fd','inp-mf','inp-stocks','inp-re','inp-epf','inp-ppf','inp-lic','inp-rental','inp-invest-simple'].forEach(function(id){
+['inp-nre','inp-nro','inp-resident','inp-fd','inp-mf','inp-mf-cost','inp-stocks','inp-stocks-cost','inp-re','inp-re-cost','inp-epf','inp-ppf','inp-lic','inp-nps','inp-rental','inp-invest-simple'].forEach(function(id){
   var el=document.getElementById(id);
   if(el) el.addEventListener('input',computeSummaryTable);
 });
@@ -1428,11 +1473,15 @@ function getDetailAmounts(){
     res:residentChecked?parseAmt('inp-resident'):0,
     fd:parseAmt('inp-fd'),
     mf:parseAmt('inp-mf'),
+    mfCost:parseAmt('inp-mf-cost'),
     stocks:parseAmt('inp-stocks'),
+    stocksCost:parseAmt('inp-stocks-cost'),
     re:parseAmt('inp-re'),
+    reCost:parseAmt('inp-re-cost'),
     epf:parseAmt('inp-epf'),
     ppf:parseAmt('inp-ppf'),
     lic:parseAmt('inp-lic'),
+    nps:parseAmt('inp-nps'),
     rental:parseAmt('inp-rental')
   };
 }
@@ -1442,52 +1491,142 @@ function getSimpleAmounts(){
     nre:parseAmt('inp-nre'),
     nro:parseAmt('inp-nro'),
     res:residentChecked?parseAmt('inp-resident'):0,
-    fd:0,mf:0,stocks:0,epf:0,ppf:0,lic:0,
+    fd:0,mf:0,mfCost:0,stocks:0,stocksCost:0,epf:0,ppf:0,lic:0,nps:0,
     investSimple:invest,
     re:parseAmt('inp-re'),
+    reCost:parseAmt('inp-re-cost'),
     rental:parseAmt('inp-rental')
+  };
+}
+
+
+function slabTaxOldRegime(taxable){
+  taxable=Math.max(0,taxable||0);
+  var tax=0;
+  if(taxable>1000000){tax+=(taxable-1000000)*0.30; taxable=1000000;}
+  if(taxable>500000){tax+=(taxable-500000)*0.20; taxable=500000;}
+  if(taxable>250000){tax+=(taxable-250000)*0.05;}
+  return tax*1.04; // 4% cess
+}
+function ltcgSurchargeRate(gain){
+  if(gain>10000000) return 0.15;
+  if(gain>5000000) return 0.10;
+  return 0;
+}
+function propertyActualTax(gain,isLTCG){
+  gain=Math.max(0,gain||0);
+  if(!gain) return 0;
+  if(isLTCG){
+    var base=gain*0.125;
+    return base*(1+ltcgSurchargeRate(gain))*1.04;
+  }
+  return slabTaxOldRegime(gain);
+}
+function getNroPathTotal(a){
+  var residentBal=residentChecked?parseAmt('inp-resident'):0;
+  var investBucket=simpleMode?(a.investSimple||0):((a.fd||0)+(a.mf||0)+(a.stocks||0)+(a.epf||0)+(a.ppf||0)+(a.lic||0));
+  return (a.nro||0)+residentBal+investBucket+(a.re||0)+((a.rental||0)*12);
+}
+function getFemaLimitInr(){
+  return USD_RATE*1000000;
+}
+function overFemaLimit(a){
+  return getNroPathTotal(a)>getFemaLimitInr();
+}
+
+
+function calcTaxModel(a){
+  var eqFrac=mfEquityPct/100;
+  var mfGain = a.mfCost>0 ? Math.max(0,a.mf-a.mfCost) : a.mf*0.40;
+  var stockGain = a.stocksCost>0 ? Math.max(0,a.stocks-a.stocksCost) : a.stocks*0.40;
+  var reGain = a.reCost>0 ? Math.max(0,a.re-a.reCost) : a.re*0.35;
+
+  var mfEquityGain = mfGain*eqFrac;
+  var mfDebtGain = mfGain*(1-eqFrac);
+  var stockLtcgGain = stockLTCG ? stockGain : 0;
+  var totalEquityLtcg = mfEquityGain + stockLtcgGain;
+  var exemption = Math.min(125000,totalEquityLtcg);
+  var mfExemption = totalEquityLtcg>0 ? exemption*(mfEquityGain/totalEquityLtcg) : 0;
+  var stockExemption = totalEquityLtcg>0 ? exemption*(stockLtcgGain/totalEquityLtcg) : 0;
+
+  var equityLtcgTax = Math.max(0,mfEquityGain-mfExemption)*0.125*1.04;
+  var stockTax = stockLTCG ? Math.max(0,stockGain-stockExemption)*0.125*1.04 : stockGain*0.20*1.04;
+
+  var reActualTax = propertyActualTax(reGain,reLTCG);
+  var rentalTaxable = Math.max(0,(a.rental*12)*0.70); // 30% standard deduction under Section 24(a)
+  var fdInterest = (a.fd||0)*0.07;
+  var nroInterest = ((a.nro||0)+(a.res||0))*0.03;
+  var slabIncome = mfDebtGain + rentalTaxable + fdInterest + nroInterest;
+  var slabTaxTotal = slabTaxOldRegime(slabIncome);
+  var mfDebtTax = slabIncome>0 ? slabTaxTotal*(mfDebtGain/slabIncome) : 0;
+  var rentalTax = slabIncome>0 ? slabTaxTotal*(rentalTaxable/slabIncome) : 0;
+  var fdTax = slabIncome>0 ? slabTaxTotal*(fdInterest/slabIncome) : 0;
+  var nroInterestTax = slabIncome>0 ? slabTaxTotal*(nroInterest/slabIncome) : 0;
+  var mfTax = equityLtcgTax + mfDebtTax;
+  var stTax = stockTax;
+  var reTdsLo = a.re*(reLTCG?0.13:0.31);
+  var reTdsHi = a.re*(reLTCG?0.1495:0.39);
+
+  return {
+    mfGain:mfGain, stockGain:stockGain, reGain:reGain,
+    mfTax:mfTax, stTax:stTax,
+    reActualTax:reActualTax, reTdsLo:reTdsLo, reTdsHi:reTdsHi,
+    epfTax:epfFiveYears?0:a.epf*0.10,
+    fdTax:fdTax,
+    nroInterestTax:nroInterestTax,
+    rentalTaxLo:rentalTax,
+    rentalTaxHi:rentalTax,
+    npsTax:0,
+    investSimpleTax:a.investSimple*0.15,
+    investSimpleTaxHi:a.investSimple*0.20
   };
 }
 
 // ── STEP 1: SUMMARY TABLE ─────────────────────────────
 function computeSummaryTable(){
   var a = simpleMode ? getSimpleAmounts() : getDetailAmounts();
-  var eqFrac=mfEquityPct/100;
-  var mfTax=a.mf*(eqFrac*0.40*0.125)+a.mf*((1-eqFrac)*0.20*0.30);
-  var stTax=a.stocks*0.40*0.125;
-  var reTaxLo=a.re*0.20; var reTaxHi=a.re*(reLTCG?0.23:0.35);
-  var epfTax=epfFiveYears?0:a.epf*0.10;
-  var fdTax=a.fd*0.07*0.30;
-  var rentalTax=a.rental*12*0.21;
-  var investSimpleTax=a.investSimple*0.15; // blended rough estimate
+  var tax=calcTaxModel(a);
+  var mfTax=tax.mfTax, stTax=tax.stTax, reActualTax=tax.reActualTax;
+  var reTdsLo=tax.reTdsLo, reTdsHi=tax.reTdsHi;
+  var epfTax=tax.epfTax, fdTax=tax.fdTax, nroInterestTax=tax.nroInterestTax||0;
+  var rentalTaxLo=tax.rentalTaxLo, rentalTaxHi=tax.rentalTaxHi;
 
-  var hasData=(a.nre+a.nro+a.res+a.fd+a.mf+a.stocks+a.re+a.epf+a.ppf+a.lic+a.rental+(a.investSimple||0))>0;
+  var hasData=(a.nre+a.nro+a.res+a.fd+a.mf+a.stocks+a.re+a.epf+a.ppf+a.lic+(a.nps||0)+a.rental+(a.investSimple||0))>0;
   var sc=document.getElementById('summary-card');
   sc.style.display=hasData?'block':'none';
   if(!hasData)return;
 
   var rows=[];
   if(a.nre>0) rows.push({n:'NRE Account',v:a.nre,taxLo:0,taxHi:0,path:'<span class="badge b-green">&#9989; Move now</span>',exact:true});
-  if(a.nro>0) rows.push({n:'NRO Account',v:a.nro,taxLo:0,taxHi:0,path:'<span class="badge b-blue">&#128203; 15CA path</span>',exact:true});
+  if(a.nro>0) rows.push({n:'NRO Account',v:a.nro,taxLo:0,taxHi:0,path:'<span class="badge b-blue">&#128203; 15CA path</span>',exact:true,taxText:nroInterestTax>0?('Annual interest tax estimate only: '+fmtL(nroInterestTax)+' (principal not reduced)'):'None'});
   if(a.res>0) rows.push({n:'Resident account &#10071;',v:a.res,taxLo:0,taxHi:0,path:'<span class="badge b-red">&#10071; Convert first</span>',exact:true});
   if(simpleMode&&a.investSimple>0){
-    rows.push({n:'All investments (combined)',v:a.investSimple,taxLo:a.investSimple*0.10,taxHi:a.investSimple*0.22,path:'<span class="badge b-amber">&#128200; Sell &rarr; NRO</span>',exact:false});
+    rows.push({n:'All investments (combined)',v:a.investSimple,taxLo:a.investSimple*0.08,taxHi:a.investSimple*0.22,path:'<span class="badge b-amber">&#128200; Sell &rarr; NRO</span>',exact:false});
   } else {
-    if(a.fd>0)  rows.push({n:'Fixed Deposits',v:a.fd,taxLo:fdTax*0.5,taxHi:fdTax,path:'<span class="badge b-blue">&#128203; NRO path</span>',exact:false});
-    if(a.mf>0)  rows.push({n:'Mutual Funds',v:a.mf,taxLo:mfTax*0.7,taxHi:mfTax*1.2,path:'<span class="badge b-amber">&#128200; Sell &rarr; NRO</span>',exact:false});
-    if(a.stocks>0) rows.push({n:'Stocks / Demat',v:a.stocks,taxLo:stTax*0.6,taxHi:stTax*1.2,path:'<span class="badge b-amber">&#128200; Sell &rarr; NRO</span>',exact:false});
+    if(a.fd>0)  rows.push({n:'Fixed Deposits',v:a.fd,taxLo:0,taxHi:0,path:'<span class="badge b-blue">&#128203; NRO path</span>',exact:false,taxText:'Annual interest tax estimate only: '+fmtL(fdTax)+' (principal not reduced)'});
+    if(a.mf>0){
+      var mfRangeLo=(a.mfCost>0||costBasisConfirmed)?0.7:0.5;
+      var mfRangeHi=(a.mfCost>0||costBasisConfirmed)?1.2:2.0;
+      rows.push({n:'Mutual Funds',v:a.mf,taxLo:mfTax*mfRangeLo,taxHi:mfTax*mfRangeHi,path:'<span class="badge b-amber">&#128200; Sell &rarr; NRO</span>',exact:false,taxText:(a.mfCost>0||costBasisConfirmed)?null:('Wide estimate: '+fmtL(mfTax*0.5)+' – '+fmtL(mfTax*2.0)+' (cost basis missing)')});
+    }
+    if(a.stocks>0){
+      var stRangeLo=(a.stocksCost>0||costBasisConfirmed)?0.8:0.5;
+      var stRangeHi=(a.stocksCost>0||costBasisConfirmed)?1.2:2.0;
+      rows.push({n:'Stocks / Demat',v:a.stocks,taxLo:stTax*stRangeLo,taxHi:stTax*stRangeHi,path:'<span class="badge b-amber">&#128200; Sell &rarr; NRO</span>',exact:false,taxText:(a.stocksCost>0||costBasisConfirmed)?null:('Wide estimate: '+fmtL(stTax*0.5)+' – '+fmtL(stTax*2.0)+' (cost basis missing)')});
+    }
     if(a.epf>0) rows.push({n:'EPF',v:a.epf,taxLo:epfTax,taxHi:epfTax*1.2,path:'<span class="badge b-amber">&#128200; Withdraw &rarr; NRO</span>',exact:epfFiveYears});
     if(a.ppf>0) rows.push({n:'PPF',v:a.ppf,taxLo:0,taxHi:0,path:'<span class="badge b-amber">&#128200; Maturity &rarr; NRO</span>',exact:true});
     if(a.lic>0) rows.push({n:'LIC / Insurance',v:a.lic,taxLo:0,taxHi:0,path:'<span class="badge b-amber">&#128200; Surrender &rarr; NRO</span>',exact:true});
+    if(a.nps>0) rows.push({n:'NPS',v:a.nps,taxLo:0,taxHi:0,path:'<span class="badge b-amber">&#128200; Not fully liquid</span>',exact:false,taxText:'Not modeled'});
   }
-  if(a.re>0) rows.push({n:'Real Estate',v:a.re,taxLo:reTaxLo,taxHi:reTaxHi,path:'<span class="badge b-purple">&#127968; Complex</span>',exact:false});
-  if(a.rental>0) rows.push({n:'Rental (annual)',v:a.rental*12,taxLo:rentalTax*0.8,taxHi:rentalTax,path:'<span class="badge b-blue">&#128203; NRO stream</span>',exact:false});
+  if(a.re>0) rows.push({n:'Real Estate',v:a.re,taxLo:reActualTax,taxHi:reActualTax,path:'<span class="badge b-purple">&#127968; Tax vs TDS</span>',exact:false,taxText:'Actual tax ~'+fmtL(reActualTax)+' / upfront TDS '+fmtL(reTdsLo)+'–'+fmtL(reTdsHi)});
+  if(a.rental>0) rows.push({n:'Rental (annual)',v:a.rental*12,taxLo:rentalTaxLo,taxHi:rentalTaxHi,path:'<span class="badge b-blue">&#128203; NRO stream</span>',exact:false,taxText:'Slab estimate after 30% standard deduction'});
 
   var html='';
   var totalV=0,totalTLo=0,totalTHi=0;
   rows.forEach(function(r){
     totalV+=r.v; totalTLo+=r.taxLo; totalTHi+=r.taxHi;
-    var taxStr=r.exact?(r.taxLo===0?'None':fmtL(r.taxLo)):('~'+fmtL(r.taxLo)+' \u2013 '+fmtL(r.taxHi));
+    var taxStr=r.taxText?r.taxText:(r.exact?(r.taxLo===0?'None':fmtL(r.taxLo)):('~'+fmtL(r.taxLo)+' \u2013 '+fmtL(r.taxHi)));
     var net=r.v-(r.taxLo+r.taxHi)/2;
     html+='<tr><td>'+r.n+'</td><td class="amt">'+fmtL(r.v)+'</td><td class="amt" style="color:var(--red);font-size:12px;">'+taxStr+'</td><td class="amt" style="color:var(--green);">'+fmtL(Math.max(0,r.v-(r.taxHi||0)))+'</td><td>'+r.path+'</td></tr>';
   });
@@ -1529,14 +1668,16 @@ function syncAutoFlags(){
   var showRes=residentChecked&&parseAmt('inp-resident')>0;
   document.getElementById('rf-resident').style.display=showRes?'flex':'none';
   var hasMfOrStocks=(simpleMode?parseAmt('inp-invest-simple'):(parseAmt('inp-mf')+parseAmt('inp-stocks')))>0;
-  document.getElementById('rf-costbasis-auto').style.display=hasMfOrStocks?'flex':'none';
+  document.getElementById('rf-costbasis-auto').style.display=(hasMfOrStocks&&!costBasisConfirmed)?'flex':'none';
   updateRiskMeter();
 }
 function countFlags(){
   var n=0;
   if(residentChecked&&parseAmt('inp-resident')>0)n++;
   var hasMfOrStocks=(simpleMode?parseAmt('inp-invest-simple'):(parseAmt('inp-mf')+parseAmt('inp-stocks')))>0;
-  if(hasMfOrStocks)n++;
+  if(hasMfOrStocks&&!costBasisConfirmed)n++;
+  var a=simpleMode?getSimpleAmounts():getDetailAmounts();
+  if(overFemaLimit(a))n++;
   Object.keys(riskFlags).forEach(function(k){if(riskFlags[k])n++;});
   return n;
 }
@@ -1565,14 +1706,15 @@ function computeBlockerSummary(){
   var items=[];
   if(residentChecked&&parseAmt('inp-resident')>0) items.push('Resident savings account needs redesignation to NRO before any transfer');
   var hasMfOrStocks=(simpleMode?parseAmt('inp-invest-simple'):(parseAmt('inp-mf')+parseAmt('inp-stocks')))>0;
-  if(hasMfOrStocks) items.push('MF / stock cost basis needed before selling \u2014 get purchase history from CAMS, KFintech, or broker');
+  if(hasMfOrStocks&&!costBasisConfirmed) items.push('MF / stock cost basis needed before selling \u2014 get purchase history from CAMS, KFintech, or broker');
+  if(overFemaLimit(a)) items.push('NRO-path amount exceeds the FEMA $1M per-person annual limit by about '+fmtL(getNroPathTotal(a)-getFemaLimitInr())+' at the current FX rate. Split across financial years or owners.');
   var flagLabels={
     banks:'Banks not yet notified of NRI status in writing',
     '15cacb':'No CA arranged for Form 15CB \u2014 needed for taxable NRO remittances above \u20b95L',
     itr:'Indian ITR not filed for years with India income \u2014 banks will ask for acknowledgment',
     unpaidtax:'Unpaid Indian taxes \u2014 will block remittance and attract ongoing interest/penalties',
-    fbar:'FBAR (FinCEN\u00a0114) not filed in the US \u2014 $10K penalty per violation',
-    fatca:'Form 8938 (FATCA) not filed \u2014 $10K penalty for qualifying years',
+    fbar:'FBAR (FinCEN\u00a0114) not filed in the US \u2014 non-willful penalties generally apply per report, not per account',
+    fatca:'Form 8938 (FATCA) not filed \u2014 penalty starts at $10K for qualifying years',
     nominee:'No nominee on some accounts \u2014 creates estate complications across two countries',
     spouse:'Spouse cannot independently access accounts or India property',
     sourcedocs:'Source of funds documentation unclear \u2014 may delay or block remittance processing'
@@ -1598,14 +1740,12 @@ document.querySelectorAll('.risk-item[data-flag]').forEach(function(el){
 // ── STEP 3: PLAN ──────────────────────────────────────
 function computePlan(){
   var a=simpleMode?getSimpleAmounts():getDetailAmounts();
-  var eqFrac=mfEquityPct/100;
-  var mfTax=a.mf*(eqFrac*0.40*0.125)+a.mf*((1-eqFrac)*0.20*0.30);
-  var stTax=a.stocks*0.40*0.125;
-  var reTaxHi=a.re*(reLTCG?0.23:0.35);
-  var epfTax=epfFiveYears?0:a.epf*0.10;
-  var fdTax=a.fd*0.07*0.30;
-  var rentalTax=a.rental*12*0.21;
-  var investSimpleTaxHi=a.investSimple*0.20;
+  var tax=calcTaxModel(a);
+  var mfTax=tax.mfTax, stTax=tax.stTax, reActualTax=tax.reActualTax;
+  var reTdsLo=tax.reTdsLo, reTdsHi=tax.reTdsHi;
+  var epfTax=tax.epfTax, fdTax=tax.fdTax, npsTax=0;
+  var rentalTaxLo=tax.rentalTaxLo, rentalTaxHi=tax.rentalTaxHi;
+  var investSimpleTaxHi=tax.investSimpleTaxHi;
 
   var liqTotal=simpleMode?a.investSimple:(a.fd+a.mf+a.stocks+a.epf+a.ppf+a.lic);
   var blockers=countFlags();
@@ -1621,12 +1761,13 @@ function computePlan(){
   // Risk flags
   var activeFlags=[];
   if(residentChecked&&parseAmt('inp-resident')>0) activeFlags.push('Resident savings account still active \u2014 redesignate to NRO before any transfer');
+  if(overFemaLimit(a)) activeFlags.push('NRO-path amount exceeds the FEMA $1M per-person annual limit by about '+fmtL(getNroPathTotal(a)-getFemaLimitInr())+' at the current FX rate. Split transfers across financial years or owners.');
   var flagLabels2={
     banks:'Banks not yet notified of NRI status in writing',
     '15cacb':'No CA arranged for Form 15CB processing',
     itr:'Indian ITR not filed for income years \u2014 bank will request acknowledgment',
     unpaidtax:'Unpaid Indian taxes \u2014 will block remittance',
-    fbar:'FBAR not filed in the US \u2014 $10K penalty per violation',
+    fbar:'FBAR not filed in the US \u2014 non-willful penalties generally apply per report, not per account',
     fatca:'Form 8938 (FATCA) not filed for qualifying years',
     nominee:'No nominee on some accounts',
     spouse:'Spouse cannot independently access accounts or India property',
@@ -1643,20 +1784,22 @@ function computePlan(){
   if(a.nre>0) cards.push({ico:'&#9989;',title:'Move Immediately \u2014 NRE Account',sub:'No repatriation limit \u00b7 Interest is tax-free in India \u00b7 No forms required',amounts:[{lbl:'Balance',val:fmtL(a.nre),cls:'green'},{lbl:'Est. tax',val:'None',cls:''},{lbl:'USD equivalent',val:fmtU(a.nre),cls:'gold'}],steps:['Wire directly from NRE account to your US bank via SWIFT','No Form 15CA, no CA certificate, no paperwork','Allow 1\u20133 business days for transfer to arrive']});
 
   var nroAndRes=a.nro+(residentChecked?parseAmt('inp-resident'):0);
-  if(nroAndRes>0) cards.push({ico:'&#128203;',title:'NRO Path \u2014 NRO Balance + Redesignated Accounts',sub:'Form 15CA required \u00b7 15CB when remittance is taxable and exceeds \u20b95L \u00b7 $1M/yr limit',amounts:[{lbl:'Balance',val:fmtL(nroAndRes),cls:''},{lbl:'Tax exposure',val:'Varies by source',cls:''},{lbl:'USD equivalent',val:fmtU(nroAndRes),cls:'gold'}],steps:['Compute all India income and pay any pending taxes with CA','CA issues Form 15CB where the remittance is taxable and exceeds \u20b95L in the FY','File Form 15CA on incometax.gov.in','Submit A2 form + 15CA (+ 15CB where applicable) to your bank','Bank processes SWIFT wire (allow 2\u20135 business days)']});
+  if(nroAndRes>0) cards.push({ico:'&#128203;',title:'NRO Path \u2014 NRO Balance + Redesignated Accounts',sub:'Form 15CA required \u00b7 15CB when remittance is taxable and exceeds \u20b95L \u00b7 $1M/yr limit',amounts:[{lbl:'Balance',val:fmtL(nroAndRes),cls:''},{lbl:'Tax / TDS',val:'Varies by source',cls:''},{lbl:'USD equivalent',val:fmtU(nroAndRes),cls:'gold'}],steps:['Compute all India income and pay any pending taxes with CA','CA issues Form 15CB where the remittance is taxable and exceeds \u20b95L in the FY','File Form 15CA on incometax.gov.in','Submit A2 form + 15CA (+ 15CB where applicable) to your bank','Bank processes SWIFT wire (allow 2\u20135 business days)']});
 
-  if(simpleMode&&a.investSimple>0) cards.push({ico:'&#128200;',title:'Liquidate Investments',sub:'Sell \u2192 TDS at source \u2192 NRO \u2192 Form 15CA \u2192 wire to US',amounts:[{lbl:'Combined value',val:fmtL(a.investSimple),cls:''},{lbl:'Tax exposure (rough)',val:'~10\u201320% range',cls:'red'},{lbl:'USD estimate (post-tax)',val:fmtU(a.investSimple*0.82),cls:'gold'}],steps:['Get cost basis for all holdings before selling anything','Update KYC to NRI status with each AMC (MF) or broker (stocks)','Sell \u2014 TDS deducted at source, net credited to NRO','File ITR to claim excess TDS refund if applicable','Remit from NRO via Form 15CA process']});
+  if(overFemaLimit(a)) cards.push({ico:'&#128197;',title:'FEMA Limit Warning \u2014 Split the NRO Path',sub:'NRO remittance limit is $1M per person per April\u2013March financial year',amounts:[{lbl:'NRO-path total',val:fmtL(getNroPathTotal(a)),cls:''},{lbl:'Current limit',val:fmtL(getFemaLimitInr()),cls:'gold'},{lbl:'Excess',val:fmtL(getNroPathTotal(a)-getFemaLimitInr()),cls:'red'}],steps:['Do not assume all NRO-path money can move in one financial year','Use both spouses\' limits only if ownership and documentation support it','Split transfers across April\u2013March financial years when needed','Confirm bank documentation before liquidation timing']});
+
+  if(simpleMode&&a.investSimple>0) cards.push({ico:'&#128200;',title:'Liquidate Investments',sub:'Sell \u2192 TDS at source \u2192 NRO \u2192 Form 15CA \u2192 wire to US',amounts:[{lbl:'Combined value',val:fmtL(a.investSimple),cls:''},{lbl:'Tax / TDS rough',val:'~8\u201322% range',cls:'red'},{lbl:'USD estimate (post-tax)',val:fmtU(a.investSimple*0.82),cls:'gold'}],steps:['Get cost basis for all holdings before selling anything','Update KYC to NRI status with each AMC (MF) or broker (stocks)','Sell \u2014 TDS deducted at source, net credited to NRO','File ITR to claim excess TDS refund if applicable','Remit from NRO via Form 15CA process']});
 
   if(!simpleMode){
     var investTotal=a.fd+a.mf+a.stocks;
-    if(investTotal>0) cards.push({ico:'&#128200;',title:'Sell &amp; Remit \u2014 MF + Stocks + FDs',sub:'Sell \u2192 TDS deducted at source \u2192 NRO \u2192 Form 15CA \u2192 wire',amounts:[{lbl:'Gross value',val:fmtL(investTotal),cls:''},{lbl:'Tax exposure (rough range)',val:'~'+fmtL((mfTax+stTax+fdTax)*0.8)+'\u2013'+fmtL((mfTax+stTax+fdTax)*1.2),cls:'red'},{lbl:'Est. net',val:fmtL(Math.max(0,investTotal-mfTax-stTax-fdTax)),cls:'green'}],steps:['Get cost basis from CAMS, KFintech, or broker before selling','Update NRI KYC with each AMC; update broker NRI demat if needed','Sell \u2014 AMC/broker deducts TDS, net credited to NRO','File ITR to claim refund if TDS exceeded actual liability','Remit from NRO via Form 15CA (+ 15CB where applicable)']});
-    var retTotal=a.epf+a.ppf+a.lic;
-    if(retTotal>0) cards.push({ico:'&#128737;&#65039;',title:'Withdraw Retirement &amp; Insurance',sub:'Withdraw / surrender \u2192 NRO \u2192 then remit',amounts:[{lbl:'Combined balance',val:fmtL(retTotal),cls:''},{lbl:'Tax exposure',val:epfTax>0?('~'+fmtL(epfTax)):'Confirm with CA',cls:''},{lbl:'Est. net',val:fmtL(Math.max(0,retTotal-epfTax)),cls:'green'}],steps:['EPF: withdraw via EPFO portal or Form 19 from last employer. Tax treatment: 5+ years service usually cleaner, but confirm with CA for NRI-specific position.','PPF: hold to maturity \u2014 cannot make fresh contributions, corpus is tax-free on withdrawal','LIC: compare surrender value vs waiting to maturity; stop premiums on policies you plan to exit','Proceeds to NRO \u2192 then standard 15CA process to remit']});
+    if(investTotal>0) cards.push({ico:'&#128200;',title:'Sell &amp; Remit \u2014 MF + Stocks + FDs',sub:'Sell \u2192 TDS deducted at source \u2192 NRO \u2192 Form 15CA \u2192 wire',amounts:[{lbl:'Gross value',val:fmtL(investTotal),cls:''},{lbl:'Tax / TDS rough range',val:'~'+fmtL((mfTax+stTax)*0.8)+'\u2013'+fmtL((mfTax+stTax)*1.2),cls:'red'},{lbl:'Est. net',val:fmtL(Math.max(0,investTotal-mfTax-stTax)),cls:'green'}],steps:['Get cost basis from CAMS, KFintech, or broker before selling','Update NRI KYC with each AMC; update broker NRI demat if needed','Sell \u2014 AMC/broker deducts TDS, net credited to NRO','File ITR to claim refund if TDS exceeded actual liability','Remit from NRO via Form 15CA (+ 15CB where applicable)']});
+    var retTotal=a.epf+a.ppf+a.lic+(a.nps||0);
+    if(retTotal>0) cards.push({ico:'&#128737;&#65039;',title:'Withdraw Retirement &amp; Insurance',sub:'Withdraw / surrender \u2192 NRO \u2192 then remit',amounts:[{lbl:'Combined balance',val:fmtL(retTotal),cls:''},{lbl:'Tax / TDS',val:epfTax>0?('~'+fmtL(epfTax)):'NPS separate',cls:''},{lbl:'Liquid excluding NPS lockup',val:fmtL(Math.max(0,a.epf+a.ppf+a.lic-epfTax)),cls:'green'}],steps:['EPF: withdraw via EPFO portal or Form 19 from last employer. Tax treatment: 5+ years service usually cleaner, but confirm with CA for NRI-specific position.','PPF: hold to maturity \u2014 cannot make fresh contributions, corpus is tax-free on withdrawal','NPS: check exit and annuity rules before assuming full liquidity','LIC: compare surrender value vs waiting to maturity; stop premiums on policies you plan to exit','Proceeds to NRO \u2192 then standard 15CA process to remit']});
   }
 
-  if(a.re>0) cards.push({ico:'&#127968;',title:'Real Estate \u2014 Complex Path',sub:(reLTCG?'LTCG (held &gt;2yr)':'STCG (held &lt;2yr)')+' \u00b7 Buyer deducts TDS \u00b7 Repatriation conditions apply',amounts:[{lbl:'Sale value',val:fmtL(a.re),cls:''},{lbl:'TDS exposure (rough)',val:reLTCG?'~20\u201323%':'~30\u201335%',cls:'red'},{lbl:'Est. net',val:fmtL(Math.max(0,a.re-reTaxHi)),cls:'green'}],steps:['Gather original purchase docs for cost basis calculation','Buyer must deduct TDS at source \u2014 factor into asking price','Apply for Section 195(3) lower TDS certificate if actual gains tax is lower (file early \u2014 30\u201360 days)','Collect Form 16A from buyer after sale; file ITR to claim excess TDS refund','Confirm repatriation eligibility for your specific property category with CA and bank','Submit 15CA + 15CB with full docs \u2014 allow 2\u20134 weeks for bank processing']});
+  if(a.re>0) cards.push({ico:'&#127968;',title:'Real Estate \u2014 Complex Path',sub:(reLTCG?'LTCG (held &gt;2yr)':'STCG (held &lt;2yr)')+' \u00b7 Buyer deducts TDS \u00b7 Repatriation conditions apply',amounts:[{lbl:'Sale value',val:fmtL(a.re),cls:''},{lbl:'Actual tax est.',val:fmtL(reActualTax),cls:'red'},{lbl:'Upfront after TDS',val:fmtL(Math.max(0,a.re-reTdsHi)),cls:'green'},{lbl:'Eventual net after ITR',val:fmtL(Math.max(0,a.re-reActualTax)),cls:'gold'}],steps:['Gather original purchase docs for cost basis calculation','Buyer must deduct TDS on sale value. Actual tax is on gain, so refund may be due after ITR','Apply for Section 195(3) lower TDS certificate if actual gains tax is lower (file early \u2014 30\u201360 days)','Collect Form 16A from buyer after sale; file ITR to claim excess TDS refund','Confirm property repatriation rules by source of purchase funds, number of properties, joint ownership, and bank documentation','Submit 15CA + 15CB with full docs \u2014 allow 2\u20134 weeks for bank processing']});
 
-  if(a.rental>0) cards.push({ico:'&#127968;',title:'Rental Income \u2014 Ongoing NRO Stream',sub:'Monthly flow into NRO \u00b7 Needs annual ITR + repatriation plan',amounts:[{lbl:'Monthly',val:fmtL(a.rental),cls:''},{lbl:'Annual',val:fmtL(a.rental*12),cls:''},{lbl:'Est. annual tax',val:'~'+fmtL(rentalTax*0.8)+'\u2013'+fmtL(rentalTax),cls:'red'}],steps:['Rental income flows to NRO each month','File Indian ITR annually \u2014 rental income is taxable','Pay advance tax if annual rental income exceeds \u20b92.5L to avoid interest','Remit accumulated NRO balance quarterly or annually via 15CA process','Report rental income on US Schedule E; claim Foreign Tax Credit for Indian tax paid']});
+  if(a.rental>0) cards.push({ico:'&#127968;',title:'Rental Income \u2014 Ongoing NRO Stream',sub:'Monthly flow into NRO \u00b7 Needs annual ITR + repatriation plan',amounts:[{lbl:'Monthly',val:fmtL(a.rental),cls:''},{lbl:'Annual',val:fmtL(a.rental*12),cls:''},{lbl:'Est. annual tax',val:fmtL(rentalTaxHi),cls:'red'}],steps:['Rental income flows to NRO each month','File Indian ITR annually \u2014 rental income is taxable','Rental estimate applies 30% standard deduction, then slab tax. Pay advance tax if tax due exceeds the threshold.','Remit accumulated NRO balance quarterly or annually via 15CA process','Report rental income on US Schedule E; claim Foreign Tax Credit for Indian tax paid']});
 
   var pc=document.getElementById('path-cards');
   pc.innerHTML=cards.map(function(c){
@@ -1730,12 +1873,14 @@ function buildSnap(){
     mf:mfEquityPct,
     re:reLTCG?1:0,
     ep:epfFiveYears?1:0,
+    st:stockLTCG?1:0,
+    cb:costBasisConfirmed?1:0,
     rf:{},
     cl:{},
     inp:{},
     fx:USD_RATE
   };
-  ['inp-nre','inp-nro','inp-resident','inp-fd','inp-mf','inp-stocks','inp-re','inp-epf','inp-ppf','inp-lic','inp-rental','inp-invest-simple'].forEach(function(id){
+  ['inp-nre','inp-nro','inp-resident','inp-fd','inp-mf','inp-mf-cost','inp-stocks','inp-stocks-cost','inp-re','inp-re-cost','inp-epf','inp-ppf','inp-lic','inp-nps','inp-rental','inp-invest-simple'].forEach(function(id){
     var el=document.getElementById(id);
     if(el&&el.value) snap.inp[id.replace('inp-','')]=el.value;
   });
@@ -1777,11 +1922,15 @@ function applySnap(snap){
     mfEquityPct=snap.mf||80;
     reLTCG=snap.re!==0;
     epfFiveYears=snap.ep!==0;
+    stockLTCG=snap.st!==0;
+    costBasisConfirmed=snap.cb===1;
     if(mfEquityPct===80){document.getElementById('mf-eq-high').className='tog-btn active';document.getElementById('mf-eq-mix').className='tog-btn';document.getElementById('mf-eq-debt').className='tog-btn';}
     else if(mfEquityPct===50){document.getElementById('mf-eq-mix').className='tog-btn active';document.getElementById('mf-eq-high').className='tog-btn';document.getElementById('mf-eq-debt').className='tog-btn';}
     else{document.getElementById('mf-eq-debt').className='tog-btn active';document.getElementById('mf-eq-high').className='tog-btn';document.getElementById('mf-eq-mix').className='tog-btn';}
     if(!reLTCG){document.getElementById('re-stcg').className='tog-btn active';document.getElementById('re-ltcg').className='tog-btn';}
     if(!epfFiveYears){document.getElementById('epf-less').className='tog-btn active';document.getElementById('epf-5y').className='tog-btn';}
+    if(!stockLTCG){document.getElementById('stock-stcg').className='tog-btn active';document.getElementById('stock-ltcg').className='tog-btn';}
+    if(costBasisConfirmed){var cbr=document.getElementById('costbasis-chk-row'); if(cbr)cbr.classList.add('checked'); var cbb=document.getElementById('costbasis-chk-box'); if(cbb)cbb.textContent='\u2713';}
     // Resident
     if(snap.rc){residentChecked=true;var row=document.getElementById('res-chk-row');if(row){row.classList.add('checked');var cb=document.getElementById('res-chk-box');if(cb)cb.textContent='\u2713';}document.getElementById('res-amount-row').style.display='block';}
     // Mode
@@ -1905,12 +2054,14 @@ function saveState(){
       mfEquityPct: mfEquityPct,
       reLTCG: reLTCG,
       epfFiveYears: epfFiveYears,
+      stockLTCG: stockLTCG,
+      costBasisConfirmed: costBasisConfirmed,
       riskFlags: riskFlags,
       checklist: checklistState,
       inputs: {},
       fxRate: USD_RATE
     };
-    ['inp-nre','inp-nro','inp-resident','inp-fd','inp-mf','inp-stocks','inp-re','inp-epf','inp-ppf','inp-lic','inp-rental','inp-invest-simple'].forEach(function(id){
+    ['inp-nre','inp-nro','inp-resident','inp-fd','inp-mf','inp-mf-cost','inp-stocks','inp-stocks-cost','inp-re','inp-re-cost','inp-epf','inp-ppf','inp-lic','inp-nps','inp-rental','inp-invest-simple'].forEach(function(id){
       var el=document.getElementById(id);
       if(el) snap.inputs[id]=el.value;
     });
@@ -1930,11 +2081,15 @@ function loadState(){
     mfEquityPct = snap.mfEquityPct || 80;
     reLTCG = snap.reLTCG !== undefined ? snap.reLTCG : true;
     epfFiveYears = snap.epfFiveYears !== undefined ? snap.epfFiveYears : true;
+    stockLTCG = snap.stockLTCG !== undefined ? snap.stockLTCG : true;
+    costBasisConfirmed = snap.costBasisConfirmed === true;
     if(mfEquityPct===80){ document.getElementById('mf-eq-high').className='tog-btn active'; document.getElementById('mf-eq-mix').className='tog-btn'; document.getElementById('mf-eq-debt').className='tog-btn'; }
     else if(mfEquityPct===50){ document.getElementById('mf-eq-mix').className='tog-btn active'; document.getElementById('mf-eq-high').className='tog-btn'; document.getElementById('mf-eq-debt').className='tog-btn'; }
     else { document.getElementById('mf-eq-debt').className='tog-btn active'; document.getElementById('mf-eq-high').className='tog-btn'; document.getElementById('mf-eq-mix').className='tog-btn'; }
     if(!reLTCG){ document.getElementById('re-stcg').className='tog-btn active'; document.getElementById('re-ltcg').className='tog-btn'; }
     if(!epfFiveYears){ document.getElementById('epf-less').className='tog-btn active'; document.getElementById('epf-5y').className='tog-btn'; }
+    if(!stockLTCG){ document.getElementById('stock-stcg').className='tog-btn active'; document.getElementById('stock-ltcg').className='tog-btn'; }
+    if(costBasisConfirmed){ var cbr2=document.getElementById('costbasis-chk-row'); if(cbr2)cbr2.classList.add('checked'); var cbb2=document.getElementById('costbasis-chk-box'); if(cbb2)cbb2.textContent='\u2713'; }
     // Resident checkbox
     if(snap.residentChecked){ residentChecked=true; var row=document.getElementById('res-chk-row'); if(row){row.classList.add('checked'); var cb=document.getElementById('res-chk-box'); if(cb)cb.textContent='\u2713';} document.getElementById('res-amount-row').style.display='block'; }
     // Mode
@@ -1959,7 +2114,7 @@ function autoSave(){
   } catch(e){}
 }
 // Hook auto-save onto inputs and checklist clicks
-['inp-nre','inp-nro','inp-resident','inp-fd','inp-mf','inp-stocks','inp-re','inp-epf','inp-ppf','inp-lic','inp-rental','inp-invest-simple','inp-fxrate'].forEach(function(id){
+['inp-nre','inp-nro','inp-resident','inp-fd','inp-mf','inp-mf-cost','inp-stocks','inp-stocks-cost','inp-re','inp-re-cost','inp-epf','inp-ppf','inp-lic','inp-nps','inp-rental','inp-invest-simple','inp-fxrate'].forEach(function(id){
   var el=document.getElementById(id);
   if(el) el.addEventListener('input', autoSave);
 });
